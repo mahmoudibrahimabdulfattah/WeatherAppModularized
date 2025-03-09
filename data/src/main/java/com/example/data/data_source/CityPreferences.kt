@@ -15,7 +15,7 @@ import javax.inject.Singleton
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "city_preferences")
 
 @Singleton
-class CityPreferences @Inject constructor(@ApplicationContext private val context: Context) {
+open class CityPreferences @Inject constructor(@ApplicationContext private val context: Context) {
 
     companion object {
         private val LAST_CITY_KEY = stringPreferencesKey("last_city")
