@@ -7,7 +7,6 @@ import androidx.compose.material.icons.rounded.Thunderstorm
 import androidx.compose.material.icons.rounded.WaterDrop
 import androidx.compose.material.icons.rounded.AcUnit
 import androidx.compose.material.icons.rounded.WbCloudy
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
@@ -28,14 +27,5 @@ object WeatherIcons {
             in 801..804 -> Icons.Rounded.WbCloudy  // Cloudy
             else -> Icons.Filled.WbSunny  // Default
         }
-    }
-
-    /**
-     * Composable that displays the appropriate weather icon
-     */
-    @Composable
-    fun WeatherIcon(code: Int) {
-        // This would be a more complex implementation in a real app
-        // For now we're just using the function above
     }
 }

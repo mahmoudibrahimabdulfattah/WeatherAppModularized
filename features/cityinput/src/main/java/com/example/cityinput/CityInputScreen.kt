@@ -46,7 +46,7 @@ fun CityInputScreen(
                 snackbarHostState.showSnackbar(currentEvent.message)
                 viewModel.clearEvent()
             }
-            null -> { /* Do nothing */ }
+            null -> { }
         }
     }
 

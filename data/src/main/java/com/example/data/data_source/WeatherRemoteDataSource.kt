@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import com.example.data.api.ForecastResponse
 import com.example.data.api.WeatherApiService
 import com.example.data.api.WeatherResponse
+import com.example.data.di.Constants
 import com.example.data.models.CurrentWeather
 import com.example.data.models.ForecastDay
 import java.time.LocalDate
@@ -17,13 +18,13 @@ class WeatherRemoteDataSource @Inject constructor(
 ) {
 
     suspend fun getCurrentWeather(cityName: String): CurrentWeather {
-        val response = weatherApiService.getCurrentWeather(cityName, BuildConfig.WEATHER_API_KEY)
+        val response = weatherApiService.getCurrentWeather(cityName, Constants.WEATHER_API_KEY)
         return mapToCurrentWeather(response)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getForecast(cityName: String): List<ForecastDay> {
-        val response = weatherApiService.getForecast(cityName, BuildConfig.WEATHER_API_KEY)
+        val response = weatherApiService.getForecast(cityName, Constants.WEATHER_API_KEY)
         return mapToForecastDays(response)
     }
 
@@ -61,7 +62,7 @@ class WeatherRemoteDataSource @Inject constructor(
                     windSpeed = noonForecast.wind.speed
                 )
             }
-            .take(7) // Take 7 days for the forecast
+            .take(7)
 
         return dailyForecasts
     }
