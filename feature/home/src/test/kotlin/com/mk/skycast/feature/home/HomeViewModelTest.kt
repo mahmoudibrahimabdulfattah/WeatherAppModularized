@@ -4,6 +4,10 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.mk.skycast.core.common.DataError
 import com.mk.skycast.core.common.Outcome
+import com.mk.skycast.core.domain.ai.AiWording
+import com.mk.skycast.core.domain.ai.RephraseAnswerUseCase
+import com.mk.skycast.core.domain.ai.RephraseRequest
+import com.mk.skycast.core.domain.ai.SetAiConsentUseCase
 import com.mk.skycast.core.domain.ask.AnswerAskQuestionUseCase
 import com.mk.skycast.core.domain.ask.AskQuestion
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
@@ -22,6 +26,8 @@ import com.mk.skycast.core.model.DayType
 import com.mk.skycast.core.model.Routine
 import com.mk.skycast.core.model.SavedLocation
 import com.mk.skycast.core.model.UserPreferences
+import com.mk.skycast.core.testing.FakeAdviceGenerator
+import com.mk.skycast.core.testing.FakeAiSettingsRepository
 import com.mk.skycast.core.testing.FakeDeviceLocationProvider
 import com.mk.skycast.core.testing.FakeLocationRepository
 import com.mk.skycast.core.testing.FakeNetworkMonitor
@@ -50,6 +56,7 @@ class HomeViewModelTest {
     private val network = FakeNetworkMonitor()
     private val deviceLocation = FakeDeviceLocationProvider()
     private val routines = FakeRoutineRepository()
+    private val aiSettings = FakeAiSettingsRepository()
     private val ticker = FakeTimeTicker()
     private lateinit var locations: FakeLocationRepository
     private lateinit var preferences: FakeUserPreferencesRepository
@@ -72,6 +79,8 @@ class HomeViewModelTest {
             observeRoutine = ObserveRoutineUseCase(routines),
             observeDayOverrides = ObserveDayOverridesUseCase(routines),
             answerAskQuestion = AnswerAskQuestionUseCase(routines, locations, weather, preferences),
+            rephraseAnswer = RephraseAnswerUseCase(FakeAdviceGenerator(), aiSettings, { true }, clock),
+            setAiConsent = SetAiConsentUseCase(aiSettings),
             setDayOverride = SetDayOverrideUseCase(routines),
             clearDayOverride = ClearDayOverrideUseCase(routines),
             clock = clock,
@@ -264,5 +273,20 @@ class HomeViewModelTest {
 
         assertThat(vm.state.value.askSheet?.question).isEqualTo(AskQuestion.RAIN_NEXT_DAYS)
         assertThat(vm.state.value.askSheet?.answer).isNotNull()
+    }
+
+    @Test
+    fun `AI wording waits for consent, then arrives under the answer`() = runTest {
+        val vm = createViewModel(saved = listOf(TestData.location(1)))
+        weather.emit(TestData.weather(1))
+        vm.onIntent(HomeIntent.AskOpened(1))
+        vm.onIntent(HomeIntent.AskQuestionSelected(AskQuestion.RAIN_NEXT_DAYS))
+        val request = RephraseRequest(AskQuestion.RAIN_NEXT_DAYS, "en", "No rain expected", emptyList(), emptyList())
+
+        vm.onIntent(HomeIntent.AskWordingRequested(request))
+        assertThat(vm.state.value.askSheet?.aiWording).isEqualTo(AiWording.NeedsConsent)
+
+        vm.onIntent(HomeIntent.AskAiConsentGiven(true))
+        assertThat(vm.state.value.askSheet?.aiWording).isEqualTo(AiWording.Ready("Friendly wording."))
     }
 }

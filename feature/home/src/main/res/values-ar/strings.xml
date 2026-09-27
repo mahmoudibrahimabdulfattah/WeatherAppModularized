@@ -89,4 +89,13 @@
     <string name="home_ask_title">اسأل سكاي كاست</string>
     <string name="home_ask_context">%1$s · %2$s</string>
     <string name="home_ask_why">لماذا هذه الإجابة؟</string>
+    <string name="home_ai_preparing">جارٍ إعداد الشرح…</string>
+    <string name="home_ai_label">صياغة بالذكاء الاصطناعي · مبنية على الحقائق أعلاه</string>
+    <string name="home_ai_limit">بلغت حد الصياغة بالذكاء الاصطناعي لليوم. تبقى إجابات التوقعات متاحة.</string>
+    <string name="home_ai_unavailable">الصياغة بالذكاء الاصطناعي غير متاحة مؤقتًا.</string>
+    <string name="home_ai_consent_title">إجابات أكثر ودًّا بالذكاء الاصطناعي؟</string>
+    <string name="home_ai_consent_body">يمكن لسكاي كاست أن يطلب من Google Gemini إعادة صياغة هذه الإجابات. تُرسل حقائق الطقس المعروضة هنا فقط، ولا يُرسل موقعك أو روتينك أو هويتك أبدًا. قد تعالج Google هذا النص وتراجعه لتحسين خدماتها. تأتي الحقائق والنصائح دائمًا من التوقعات نفسها.</string>
+    <string name="home_ai_consent_adult">عمري 18 عامًا أو أكثر</string>
+    <string name="home_ai_consent_accept">استخدام الصياغة بالذكاء الاصطناعي</string>
+    <string name="home_ai_consent_decline">المتابعة بدون ذكاء اصطناعي</string>
 </resources>

@@ -15,12 +15,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -36,20 +40,27 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 import com.mk.skycast.core.designsystem.components.GlassCard
 import com.mk.skycast.core.designsystem.components.SkyChoiceRow
 import com.mk.skycast.core.designsystem.theme.SkyColors
 import com.mk.skycast.core.designsystem.theme.SkyIconSize
 import com.mk.skycast.core.designsystem.theme.SkySpace
+import com.mk.skycast.core.domain.ai.AiWording
+import com.mk.skycast.core.domain.ai.RephraseRequest
 import com.mk.skycast.core.domain.ask.AskQuestion
 import com.mk.skycast.core.domain.ask.ExerciseKind
+import com.mk.skycast.core.ui.ask.AskDisplay
 import com.mk.skycast.core.ui.ask.AskText
 import com.mk.skycast.feature.home.AskSheetState
 import com.mk.skycast.feature.home.HomeIntent
@@ -91,6 +102,7 @@ internal fun AskSheet(
     modifier: Modifier = Modifier,
 ) {
     val scroll = rememberScrollState()
+    val latestOnIntent by rememberUpdatedState(onIntent)
     val answerRequester = remember { BringIntoViewRequester() }
     LaunchedEffect(sheet.answer) {
         if (sheet.answer != null) answerRequester.bringIntoView()
@@ -141,8 +153,24 @@ internal fun AskSheet(
                 )
             }
             sheet.answer?.let { answer ->
+                val display = askText.display(answer, now)
+                val languageTag = LocalConfiguration.current.locales[0].toLanguageTag()
+                val request = remember(display.headline, display.chips, display.reasons, languageTag) {
+                    sheet.question?.let { question ->
+                        RephraseRequest(
+                            question = question,
+                            languageTag = languageTag,
+                            headline = display.headline.withoutIsolates(),
+                            facts = display.chips.map { it.withoutIsolates() },
+                            reasons = display.reasons.map { it.withoutIsolates() },
+                        )
+                    }
+                }
+                LaunchedEffect(request) { request?.let { latestOnIntent(HomeIntent.AskWordingRequested(it)) } }
                 AnswerBody(
-                    display = askText.display(answer, now),
+                    display = display,
+                    aiWording = sheet.aiWording,
+                    onConsent = { onIntent(HomeIntent.AskAiConsentGiven(it)) },
                     modifier = Modifier.bringIntoViewRequester(answerRequester),
                 )
             }
@@ -152,7 +180,12 @@ internal fun AskSheet(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun AnswerBody(display: com.mk.skycast.core.ui.ask.AskDisplay, modifier: Modifier = Modifier) {
+private fun AnswerBody(
+    display: AskDisplay,
+    aiWording: AiWording?,
+    onConsent: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var reasonsExpanded by rememberSaveable { mutableStateOf(false) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(SkySpace.medium)) {
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -162,7 +195,7 @@ private fun AnswerBody(display: com.mk.skycast.core.ui.ask.AskDisplay, modifier:
                 AssistChip(onClick = {}, label = { Text(chip) })
             }
         }
-        AiExplanationSlot()
+        aiWording?.let { AiSection(it, onConsent) }
         TextButton(onClick = {
             reasonsExpanded = !reasonsExpanded
         }, modifier = Modifier.heightIn(min = SkySpace.touch)) {
@@ -188,5 +221,79 @@ private fun AnswerBody(display: com.mk.skycast.core.ui.ask.AskDisplay, modifier:
     }
 }
 
+/** Bidi isolates help rendering but mean nothing to the model. */
+private fun String.withoutIsolates(): String = filterNot { it in '\u2066'..'\u2069' }
+
 @Composable
-private fun AiExplanationSlot() = Unit
+private fun AiSection(wording: AiWording, onConsent: (Boolean) -> Unit, modifier: Modifier = Modifier) {
+    when (wording) {
+        AiWording.Hidden, AiWording.Declined -> Unit
+
+        AiWording.NeedsConsent -> AiConsentCard(onConsent, modifier)
+
+        AiWording.Loading -> Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(SkySpace.small),
+        ) {
+            CircularProgressIndicator(modifier = Modifier.size(SkyIconSize.small), strokeWidth = 2.dp)
+            Text(stringResource(R.string.home_ai_preparing), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+
+        is AiWording.Ready -> Column(modifier, verticalArrangement = Arrangement.spacedBy(SkySpace.tiny)) {
+            Text(wording.text, style = MaterialTheme.typography.bodyLarge)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(SkySpace.tiny),
+            ) {
+                Icon(Icons.Rounded.AutoAwesome, contentDescription = null, modifier = Modifier.size(SkyIconSize.small))
+                Text(
+                    stringResource(R.string.home_ai_label),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        AiWording.DailyLimitReached -> AiNote(stringResource(R.string.home_ai_limit), modifier)
+
+        AiWording.Unavailable -> AiNote(stringResource(R.string.home_ai_unavailable), modifier)
+    }
+}
+
+@Composable
+private fun AiNote(text: String, modifier: Modifier = Modifier) {
+    Text(text, modifier, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+/** Asked once, before the first request: what is sent, to whom, and adults only. */
+@Composable
+private fun AiConsentCard(onConsent: (Boolean) -> Unit, modifier: Modifier = Modifier) {
+    var isAdult by rememberSaveable { mutableStateOf(false) }
+    Surface(modifier, shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+        Column(Modifier.padding(SkySpace.medium), verticalArrangement = Arrangement.spacedBy(SkySpace.small)) {
+            Text(stringResource(R.string.home_ai_consent_title), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.home_ai_consent_body), style = MaterialTheme.typography.bodyMedium)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = SkySpace.touch)
+                    .toggleable(value = isAdult, role = Role.Checkbox, onValueChange = { isAdult = it }),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Checkbox(checked = isAdult, onCheckedChange = null)
+                Text(stringResource(R.string.home_ai_consent_adult))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(SkySpace.small)) {
+                TextButton(onClick = { onConsent(false) }, modifier = Modifier.heightIn(min = SkySpace.touch)) {
+                    Text(stringResource(R.string.home_ai_consent_decline))
+                }
+                Button(
+                    onClick = { onConsent(true) },
+                    enabled = isAdult,
+                    modifier = Modifier.weight(1f).heightIn(min = SkySpace.touch),
+                ) { Text(stringResource(R.string.home_ai_consent_accept)) }
+            }
+        }
+    }
+}

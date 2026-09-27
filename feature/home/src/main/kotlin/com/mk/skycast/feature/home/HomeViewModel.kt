@@ -3,6 +3,11 @@ package com.mk.skycast.feature.home
 import androidx.lifecycle.viewModelScope
 import com.mk.skycast.core.common.Outcome
 import com.mk.skycast.core.common.TimeTicker
+import com.mk.skycast.core.domain.ai.AiConsent
+import com.mk.skycast.core.domain.ai.AiWording
+import com.mk.skycast.core.domain.ai.RephraseAnswerUseCase
+import com.mk.skycast.core.domain.ai.RephraseRequest
+import com.mk.skycast.core.domain.ai.SetAiConsentUseCase
 import com.mk.skycast.core.domain.ask.AnswerAskQuestionUseCase
 import com.mk.skycast.core.domain.ask.AskQuestion
 import com.mk.skycast.core.domain.brief.ExposurePlanner
@@ -57,6 +62,8 @@ class HomeViewModel @Inject constructor(
     observeRoutine: ObserveRoutineUseCase,
     observeDayOverrides: ObserveDayOverridesUseCase,
     private val answerAskQuestion: AnswerAskQuestionUseCase,
+    private val rephraseAnswer: RephraseAnswerUseCase,
+    private val setAiConsent: SetAiConsentUseCase,
     private val setDayOverride: SetDayOverrideUseCase,
     private val clearDayOverride: ClearDayOverrideUseCase,
     private val clock: Clock,
@@ -66,6 +73,7 @@ class HomeViewModel @Inject constructor(
     private var autoRefreshJob: Job? = null
     private var hasAttemptedAutoLocate = false
     private var pendingOpenPlans = false
+    private var lastWordingRequest: RephraseRequest? = null
 
     init {
         combine(
@@ -144,6 +152,13 @@ class HomeViewModel @Inject constructor(
 
             HomeIntent.AskDismissed -> reduce { copy(askSheet = null) }
 
+            is HomeIntent.AskWordingRequested -> requestWording(intent.request)
+
+            is HomeIntent.AskAiConsentGiven -> viewModelScope.launch {
+                setAiConsent(if (intent.granted) AiConsent.GRANTED else AiConsent.DECLINED)
+                lastWordingRequest?.let(::requestWording)
+            }
+
             HomeIntent.OpenPlansRequested ->
                 if (currentState.routine?.isConfigured == true) openPlanEditor() else pendingOpenPlans = true
 
@@ -183,9 +198,21 @@ class HomeViewModel @Inject constructor(
         reduce { copy(askSheet = AskSheetState(location = page.location, zoneId = weather.zoneId)) }
     }
 
+    /** Deterministic answer stays on screen; AI wording, if allowed, arrives underneath. */
+    private fun requestWording(request: RephraseRequest) {
+        lastWordingRequest = request
+        viewModelScope.launch {
+            val gate = rephraseAnswer.gate()
+            reduce { copy(askSheet = askSheet?.copy(aiWording = gate ?: AiWording.Loading)) }
+            if (gate != null) return@launch
+            val wording = rephraseAnswer(request)
+            if (lastWordingRequest == request) reduce { copy(askSheet = askSheet?.copy(aiWording = wording)) }
+        }
+    }
+
     private fun selectAskQuestion(question: AskQuestion) {
         val sheet = currentState.askSheet ?: return
-        reduce { copy(askSheet = sheet.copy(question = question, answer = null)) }
+        reduce { copy(askSheet = sheet.copy(question = question, answer = null, aiWording = null)) }
         viewModelScope.launch {
             val answer = answerAskQuestion(question, currentState.askSheet?.exercise, clock.instant()) ?: return@launch
             reduce { copy(askSheet = askSheet?.copy(answer = answer)) }

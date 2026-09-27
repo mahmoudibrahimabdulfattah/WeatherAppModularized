@@ -5,6 +5,11 @@ import com.mk.skycast.core.common.LocationError
 import com.mk.skycast.core.common.Outcome
 import com.mk.skycast.core.common.TimeTicker
 import com.mk.skycast.core.common.map
+import com.mk.skycast.core.domain.ai.AdviceGenerator
+import com.mk.skycast.core.domain.ai.AiConsent
+import com.mk.skycast.core.domain.ai.AiError
+import com.mk.skycast.core.domain.ai.AiSettingsRepository
+import com.mk.skycast.core.domain.ai.RephraseRequest
 import com.mk.skycast.core.domain.repository.AppLanguageRepository
 import com.mk.skycast.core.domain.repository.BriefHistoryRepository
 import com.mk.skycast.core.domain.repository.BriefScheduler
@@ -215,5 +220,25 @@ class FakeBriefScheduler : BriefScheduler {
     val scheduled = mutableListOf<Routine>()
     override fun schedule(routine: Routine, overrides: List<DayPlanOverride>, now: java.time.Instant) {
         scheduled += routine
+    }
+}
+
+class FakeAiSettingsRepository(initial: AiConsent = AiConsent.UNKNOWN) : AiSettingsRepository {
+    private val consentState = MutableStateFlow(initial)
+    val generations = mutableMapOf<LocalDate, Int>()
+    override val consent: Flow<AiConsent> = consentState
+    override suspend fun setConsent(consent: AiConsent) = consentState.update { consent }
+    override suspend fun generationsOn(date: LocalDate): Int = generations[date] ?: 0
+    override suspend fun recordGeneration(date: LocalDate) {
+        generations[date] = generationsOn(date) + 1
+    }
+}
+
+class FakeAdviceGenerator(var result: Outcome<String, AiError> = Outcome.Success("Friendly wording.")) :
+    AdviceGenerator {
+    val requests = mutableListOf<RephraseRequest>()
+    override suspend fun rephrase(request: RephraseRequest): Outcome<String, AiError> {
+        requests += request
+        return result
     }
 }

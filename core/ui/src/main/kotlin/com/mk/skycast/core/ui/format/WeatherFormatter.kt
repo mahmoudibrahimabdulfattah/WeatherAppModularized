@@ -86,7 +86,7 @@ class WeatherFormatter(
         },
     )
 
-    fun percent(value: Int): String = integer.format(value) + "%"
+    fun percent(value: Int): String = ltr(integer.format(value) + "%")
 
     fun visibility(meters: Double): String =
         ltr(if (meters >= 1000) decimal.format(meters / 1000) + " km" else integer.format(meters.roundToInt()) + " m")

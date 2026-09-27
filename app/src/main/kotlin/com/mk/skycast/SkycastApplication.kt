@@ -40,6 +40,7 @@ class SkycastApplication :
 
     override fun onCreate() {
         super.onCreate()
+        installAppCheck()
         syncScheduler.schedulePeriodicSync()
         // Re-plan the brief whenever the routine or a day's plan changes (and on every start).
         combine(observeRoutine(), observeDayOverrides()) { routine, overrides ->
