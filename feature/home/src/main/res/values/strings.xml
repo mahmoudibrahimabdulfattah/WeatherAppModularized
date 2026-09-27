@@ -7,7 +7,6 @@
     <string name="home_high_low">H: %1$s   L: %2$s</string>
     <string name="home_local_time">Local time · %1$s</string>
     <string name="home_just_now">Updated just now</string>
-    <string name="home_updated">Updated %1$s min ago</string>
     <string name="home_stale">Waiting for fresh weather</string>
     <string name="home_hourly">Hourly forecast</string>
     <string name="home_daily">10-day forecast</string>
@@ -43,4 +42,12 @@
     <string name="home_today_total">Today’s total</string>
     <string name="home_current">Right now</string>
     <string name="home_daylight">Daylight</string>
+    <plurals name="home_updated_minutes">
+        <item quantity="one">Updated %1$s min ago</item>
+        <item quantity="other">Updated %1$s min ago</item>
+    </plurals>
+    <plurals name="home_updated_hours">
+        <item quantity="one">Updated %1$s hour ago</item>
+        <item quantity="other">Updated %1$s hours ago</item>
+    </plurals>
 </resources>

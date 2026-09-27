@@ -7,7 +7,6 @@
     <string name="home_high_low">العظمى: %1$s   الصغرى: %2$s</string>
     <string name="home_local_time">التوقيت المحلي · %1$s</string>
     <string name="home_just_now">تم التحديث الآن</string>
-    <string name="home_updated">تم التحديث قبل %1$s دقيقة</string>
     <string name="home_stale">بانتظار تحديث الطقس</string>
     <string name="home_hourly">التوقعات بالساعة</string>
     <string name="home_daily">توقعات 10 أيام</string>
@@ -43,4 +42,21 @@
     <string name="home_today_total">إجمالي اليوم</string>
     <string name="home_current">الآن</string>
     <string name="home_daylight">ضوء النهار</string>
+    <!-- Arabic plural categories: one = 1, two = 2, few = 3–10, many = 11–99, other = 100+. -->
+    <plurals name="home_updated_minutes">
+        <item quantity="zero">تم التحديث الآن</item>
+        <item quantity="one">تم التحديث قبل دقيقة</item>
+        <item quantity="two">تم التحديث قبل دقيقتين</item>
+        <item quantity="few">تم التحديث قبل %1$s دقائق</item>
+        <item quantity="many">تم التحديث قبل %1$s دقيقة</item>
+        <item quantity="other">تم التحديث قبل %1$s دقيقة</item>
+    </plurals>
+    <plurals name="home_updated_hours">
+        <item quantity="zero">تم التحديث الآن</item>
+        <item quantity="one">تم التحديث قبل ساعة</item>
+        <item quantity="two">تم التحديث قبل ساعتين</item>
+        <item quantity="few">تم التحديث قبل %1$s ساعات</item>
+        <item quantity="many">تم التحديث قبل %1$s ساعة</item>
+        <item quantity="other">تم التحديث قبل %1$s ساعة</item>
+    </plurals>
 </resources>
