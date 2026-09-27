@@ -59,4 +59,29 @@
         <item quantity="many">تم التحديث قبل %1$s ساعة</item>
         <item quantity="other">تم التحديث قبل %1$s ساعة</item>
     </plurals>
+    <string name="home_brief_edit_routine">تعديل روتيني</string>
+    <string name="home_brief_changed">خطط معدّلة</string>
+    <string name="home_brief_plans_changed">تغيّرت خططك؟</string>
+    <string name="home_brief_more">التفاصيل</string>
+    <string name="home_brief_less">أقل</string>
+    <string name="home_brief_partial">جزء من يومك خارج نطاق التوقعات الحالية؛ تحقّق لاحقًا.</string>
+    <string name="home_brief_based_on">بحسب توقعات الساعة %1$s</string>
+    <string name="home_brief_prompt_title">كن مستعدًا للغد</string>
+    <string name="home_brief_prompt_body">أخبر Skycast بأوقات خروجك المعتادة، واحصل كل ليلة على ملخص بما تلبسه وما تحمله ومتى يتغير الطقس.</string>
+    <string name="home_brief_prompt_action">إعداد روتيني</string>
+    <string name="home_plan_title">خطط يوم %1$s</string>
+    <string name="home_plan_hint">يتغير هذا اليوم فقط، ويبقى روتينك كما هو.</string>
+    <string name="home_plan_away">ذاهب إلى العمل</string>
+    <string name="home_plan_home">باقٍ في المنزل</string>
+    <string name="home_plan_off">يوم إجازة</string>
+    <string name="home_plan_times">%1$s–%2$s</string>
+    <string name="home_plan_add_outing">سأخرج</string>
+    <string name="home_plan_one_time">خروجة لمرة واحدة</string>
+    <string name="home_plan_remove">إزالة</string>
+    <string name="home_plan_leave">الخروج</string>
+    <string name="home_plan_return">العودة</string>
+    <string name="home_plan_outdoors">في الخارج</string>
+    <string name="home_plan_indoors">داخل مكان مغلق</string>
+    <string name="home_plan_reset">العودة إلى الروتين</string>
+    <string name="home_plan_save">حفظ لهذا اليوم</string>
 </resources>

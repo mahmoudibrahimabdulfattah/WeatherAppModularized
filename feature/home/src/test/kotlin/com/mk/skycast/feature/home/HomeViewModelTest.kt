@@ -4,18 +4,26 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.mk.skycast.core.common.DataError
 import com.mk.skycast.core.common.Outcome
+import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
+import com.mk.skycast.core.domain.usecase.ClearDayOverrideUseCase
 import com.mk.skycast.core.domain.usecase.LocalizeLocationNamesUseCase
+import com.mk.skycast.core.domain.usecase.ObserveDayOverridesUseCase
 import com.mk.skycast.core.domain.usecase.ObserveLocationWeatherUseCase
 import com.mk.skycast.core.domain.usecase.ObserveNetworkStatusUseCase
+import com.mk.skycast.core.domain.usecase.ObserveRoutineUseCase
 import com.mk.skycast.core.domain.usecase.ObserveUserPreferencesUseCase
 import com.mk.skycast.core.domain.usecase.RefreshWeatherUseCase
 import com.mk.skycast.core.domain.usecase.SelectLocationUseCase
+import com.mk.skycast.core.domain.usecase.SetDayOverrideUseCase
 import com.mk.skycast.core.domain.usecase.SyncDeviceLocationUseCase
+import com.mk.skycast.core.model.DayType
+import com.mk.skycast.core.model.Routine
 import com.mk.skycast.core.model.SavedLocation
 import com.mk.skycast.core.model.UserPreferences
 import com.mk.skycast.core.testing.FakeDeviceLocationProvider
 import com.mk.skycast.core.testing.FakeLocationRepository
 import com.mk.skycast.core.testing.FakeNetworkMonitor
+import com.mk.skycast.core.testing.FakeRoutineRepository
 import com.mk.skycast.core.testing.FakeTimeTicker
 import com.mk.skycast.core.testing.FakeUserPreferencesRepository
 import com.mk.skycast.core.testing.FakeWeatherRepository
@@ -23,6 +31,7 @@ import com.mk.skycast.core.testing.MainDispatcherRule
 import com.mk.skycast.core.testing.TestData
 import java.time.Clock
 import java.time.Duration
+import java.time.LocalDate
 import java.time.ZoneOffset
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -37,6 +46,8 @@ class HomeViewModelTest {
     private val weather = FakeWeatherRepository()
     private val network = FakeNetworkMonitor()
     private val deviceLocation = FakeDeviceLocationProvider()
+    private val routines = FakeRoutineRepository()
+    private val ticker = FakeTimeTicker()
     private lateinit var locations: FakeLocationRepository
     private lateinit var preferences: FakeUserPreferencesRepository
 
@@ -54,8 +65,13 @@ class HomeViewModelTest {
             selectLocation = SelectLocationUseCase(preferences),
             syncDeviceLocation = SyncDeviceLocationUseCase(deviceLocation, locations, weather, preferences),
             localizeLocationNames = LocalizeLocationNamesUseCase(locations, deviceLocation),
+            observeDailyBrief = ObserveDailyBriefUseCase(routines, locations, weather, ticker),
+            observeRoutine = ObserveRoutineUseCase(routines),
+            observeDayOverrides = ObserveDayOverridesUseCase(routines),
+            setDayOverride = SetDayOverrideUseCase(routines),
+            clearDayOverride = ClearDayOverrideUseCase(routines),
             clock = clock,
-            ticker = FakeTimeTicker(),
+            ticker = ticker,
         )
     }
 
@@ -179,5 +195,57 @@ class HomeViewModelTest {
             vm.onIntent(HomeIntent.OpenSettingsClicked)
             assertThat(awaitItem()).isEqualTo(HomeEffect.NavigateToSettings)
         }
+    }
+
+    @Test
+    fun `routine prompt shows until the routine is set up, then the brief appears`() = runTest {
+        val vm = createViewModel(saved = listOf(TestData.location(1)))
+        weather.emit(TestData.weather(1))
+
+        assertThat(vm.state.value.showRoutinePrompt).isTrue()
+        assertThat(vm.state.value.briefLocationId).isEqualTo(1)
+
+        routines.save(Routine(isConfigured = true))
+
+        assertThat(vm.state.value.showRoutinePrompt).isFalse()
+        assertThat(vm.state.value.brief?.date).isEqualTo(LocalDate.of(2026, 9, 28))
+    }
+
+    @Test
+    fun `plans changed saves a one-day override and reset clears it`() = runTest {
+        routines.save(Routine(isConfigured = true))
+        val vm = createViewModel(saved = listOf(TestData.location(1)))
+        weather.emit(TestData.weather(1))
+
+        vm.onIntent(HomeIntent.PlansChangedClicked)
+        val editor = vm.state.value.planEditor!!
+        assertThat(editor.usualDayType).isEqualTo(DayType.AWAY) // Monday
+        vm.onIntent(HomeIntent.PlanDayTypeChanged(DayType.HOME))
+        vm.onIntent(HomeIntent.PlanAddOutingClicked)
+        vm.onIntent(HomeIntent.PlanSaveClicked)
+
+        val saved = routines.currentOverrides.single()
+        assertThat(saved.date).isEqualTo(editor.date)
+        assertThat(saved.dayType).isEqualTo(DayType.HOME)
+        assertThat(saved.addedOutings).hasSize(1)
+        assertThat(vm.state.value.planEditor).isNull()
+
+        vm.onIntent(HomeIntent.PlansChangedClicked)
+        assertThat(vm.state.value.planEditor?.hasSavedOverride).isTrue()
+        vm.onIntent(HomeIntent.PlanResetClicked)
+        assertThat(routines.currentOverrides).isEmpty()
+    }
+
+    @Test
+    fun `choosing the usual day again is not saved as a change`() = runTest {
+        routines.save(Routine(isConfigured = true))
+        val vm = createViewModel(saved = listOf(TestData.location(1)))
+        weather.emit(TestData.weather(1))
+
+        vm.onIntent(HomeIntent.PlansChangedClicked)
+        vm.onIntent(HomeIntent.PlanDayTypeChanged(DayType.AWAY))
+        vm.onIntent(HomeIntent.PlanSaveClicked)
+
+        assertThat(routines.currentOverrides).isEmpty()
     }
 }

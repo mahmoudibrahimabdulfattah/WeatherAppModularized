@@ -31,6 +31,7 @@ import com.mk.skycast.core.model.OutingKind
 import com.mk.skycast.core.model.OutingSetting
 import com.mk.skycast.core.model.TimeFormat
 import com.mk.skycast.core.model.UserPreferences
+import com.mk.skycast.core.ui.component.TimeRow
 import com.mk.skycast.core.ui.format.rememberWeatherFormatter
 import com.mk.skycast.feature.routine.R
 import com.mk.skycast.feature.routine.RoutineIntent

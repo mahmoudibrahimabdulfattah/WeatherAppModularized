@@ -20,6 +20,7 @@ fun SkycastNavHost() {
         homeScreen(
             onOpenPlaces = { navController.navigate(PlacesDestination) { launchSingleTop = true } },
             onOpenSettings = { navController.navigate(SettingsDestination) { launchSingleTop = true } },
+            onOpenRoutine = { navController.navigate(RoutineDestination) { launchSingleTop = true } },
         )
         placesScreen(onBack = { navController.popBackStack() })
         settingsScreen(

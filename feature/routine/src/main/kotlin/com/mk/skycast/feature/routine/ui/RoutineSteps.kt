@@ -29,6 +29,7 @@ import com.mk.skycast.core.model.DayType
 import com.mk.skycast.core.model.Outing
 import com.mk.skycast.core.model.Routine
 import com.mk.skycast.core.model.TravelMode
+import com.mk.skycast.core.ui.component.TimeRow
 import com.mk.skycast.core.ui.format.WeatherFormatter
 import com.mk.skycast.feature.routine.R
 import com.mk.skycast.feature.routine.RoutineIntent

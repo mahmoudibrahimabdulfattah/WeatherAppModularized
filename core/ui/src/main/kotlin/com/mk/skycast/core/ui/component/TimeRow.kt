@@ -1,4 +1,4 @@
-package com.mk.skycast.feature.routine.ui
+package com.mk.skycast.core.ui.component
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,13 +14,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mk.skycast.core.designsystem.components.SkyValueRow
+import com.mk.skycast.core.ui.R
 import com.mk.skycast.core.ui.format.WeatherFormatter
-import com.mk.skycast.feature.routine.R
 import java.time.LocalTime
 
 /** A row showing a time; tapping it opens a Material time picker. */
 @Composable
-internal fun TimeRow(
+fun TimeRow(
     title: String,
     time: LocalTime,
     formatter: WeatherFormatter,
@@ -59,11 +59,11 @@ private fun TimePickerDialog(
         text = { TimePicker(state = pickerState) },
         confirmButton = {
             TextButton(onClick = { onConfirm(LocalTime.of(pickerState.hour, pickerState.minute)) }) {
-                Text(stringResource(R.string.routine_ok))
+                Text(stringResource(R.string.core_ui_ok))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.routine_cancel)) }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.core_ui_cancel)) }
         },
     )
 }

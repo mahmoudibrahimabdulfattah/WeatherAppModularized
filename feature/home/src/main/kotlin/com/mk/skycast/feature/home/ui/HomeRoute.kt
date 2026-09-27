@@ -20,7 +20,12 @@ import com.mk.skycast.feature.home.HomeViewModel
 
 /** Stateful entry point: wires the ViewModel, lifecycle and effects to the stateless [HomeScreen]. */
 @Composable
-fun HomeRoute(onOpenPlaces: () -> Unit, onOpenSettings: () -> Unit, viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeRoute(
+    onOpenPlaces: () -> Unit,
+    onOpenSettings: () -> Unit,
+    onOpenRoutine: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -42,6 +47,8 @@ fun HomeRoute(onOpenPlaces: () -> Unit, onOpenSettings: () -> Unit, viewModel: H
             HomeEffect.NavigateToPlaces -> onOpenPlaces()
 
             HomeEffect.NavigateToSettings -> onOpenSettings()
+
+            HomeEffect.NavigateToRoutine -> onOpenRoutine()
 
             HomeEffect.RequestLocationPermission ->
                 permissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)

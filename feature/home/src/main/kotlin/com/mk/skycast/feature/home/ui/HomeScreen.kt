@@ -19,10 +19,12 @@ import com.mk.skycast.core.designsystem.components.SkySystemBars
 import com.mk.skycast.core.designsystem.components.rememberReducedMotion
 import com.mk.skycast.core.designsystem.theme.SkyColors
 import com.mk.skycast.core.model.WeatherCondition
+import com.mk.skycast.core.ui.brief.rememberBriefText
 import com.mk.skycast.core.ui.format.rememberWeatherFormatter
 import com.mk.skycast.core.ui.weather.WeatherBackdrop
 import com.mk.skycast.feature.home.HomeIntent
 import com.mk.skycast.feature.home.HomeState
+import java.time.ZoneId
 
 private const val SKY_CROSSFADE_MS = 900
 
@@ -80,5 +82,10 @@ fun HomeScreen(
                 }
             }
         }
+    }
+    state.planEditor?.let { editor ->
+        val zone = state.pages.firstOrNull { it.location.id == state.briefLocationId }?.weather?.zoneId
+            ?: ZoneId.systemDefault()
+        PlanSheet(editor, formatter, rememberBriefText(formatter, zone), onIntent)
     }
 }

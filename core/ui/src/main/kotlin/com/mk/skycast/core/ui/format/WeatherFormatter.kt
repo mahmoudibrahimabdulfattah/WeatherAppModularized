@@ -34,6 +34,18 @@ class WeatherFormatter(
     fun temperature(celsius: Double): String =
         integer.format(UnitConversions.temperature(celsius, preferences.temperatureUnit).roundToInt()) + "°"
 
+    /** A temperature difference ("7°"): scaled for °F but never offset. */
+    fun temperatureDelta(celsius: Double): String {
+        val scaled = if (preferences.temperatureUnit ==
+            TemperatureUnit.FAHRENHEIT
+        ) {
+            celsius * FAHRENHEIT_PER_CELSIUS
+        } else {
+            celsius
+        }
+        return integer.format(scaled.roundToInt()) + "°"
+    }
+
     /** "23°C" */
     fun temperatureWithUnit(celsius: Double): String = temperature(celsius) + temperatureUnitSymbol()
 
@@ -119,5 +131,9 @@ class WeatherFormatter(
         TimeFormat.SYSTEM -> is24HourSystem
         TimeFormat.HOUR_12 -> false
         TimeFormat.HOUR_24 -> true
+    }
+
+    private companion object {
+        const val FAHRENHEIT_PER_CELSIUS = 1.8
     }
 }

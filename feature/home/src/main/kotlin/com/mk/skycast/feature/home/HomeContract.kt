@@ -1,7 +1,13 @@
 package com.mk.skycast.feature.home
 
+import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
+import com.mk.skycast.core.model.DailyBrief
 import com.mk.skycast.core.model.DailyForecast
+import com.mk.skycast.core.model.DayPlanOverride
+import com.mk.skycast.core.model.DayType
 import com.mk.skycast.core.model.HourlyForecast
+import com.mk.skycast.core.model.Outing
+import com.mk.skycast.core.model.Routine
 import com.mk.skycast.core.model.SavedLocation
 import com.mk.skycast.core.model.UserPreferences
 import com.mk.skycast.core.model.Weather
@@ -10,6 +16,7 @@ import com.mk.skycast.core.mvi.UiIntent
 import com.mk.skycast.core.mvi.UiState
 import com.mk.skycast.core.ui.text.UiText
 import java.time.Instant
+import java.time.LocalDate
 
 data class HomeState(
     val isLoading: Boolean = true,
@@ -23,9 +30,34 @@ data class HomeState(
     val now: Instant = Instant.EPOCH,
     /** Last refresh error per location id, shown when that page has no cached data. */
     val pageErrors: Map<Long, UiText> = emptyMap(),
+    val routine: Routine? = null,
+    val overrides: List<DayPlanOverride> = emptyList(),
+    /** Deterministic brief for the routine's location; null until the routine is set up. */
+    val brief: DailyBrief? = null,
+    val isBriefExpanded: Boolean = false,
+    /** Open "plans changed?" sheet, or null. */
+    val planEditor: PlanEditor? = null,
 ) : UiState {
+    val showRoutinePrompt: Boolean get() = routine?.isConfigured == false
+
+    /** Page that hosts the brief card (or the "set up your routine" prompt). */
+    val briefLocationId: Long?
+        get() = brief?.locationId
+            ?: routine?.let { ObserveDailyBriefUseCase.routineLocation(it, pages.map(WeatherPage::location)) }?.id
     val isEmpty: Boolean get() = !isLoading && pages.isEmpty()
     val selectedPage: WeatherPage? get() = pages.getOrNull(selectedIndex)
+}
+
+/** One-day change of plans, edited as a draft until saved. */
+data class PlanEditor(
+    val date: LocalDate,
+    /** The routine's plan for that day, shown as the default. */
+    val usualDayType: DayType,
+    val usualOutings: List<Outing>,
+    val draft: DayPlanOverride,
+    val hasSavedOverride: Boolean,
+) {
+    val dayType: DayType get() = draft.dayType ?: usualDayType
 }
 
 /** One swipeable page per saved location. */
@@ -54,11 +86,24 @@ sealed interface HomeIntent : UiIntent {
     data class LocationPermissionResult(val granted: Boolean) : HomeIntent
     data object OpenPlacesClicked : HomeIntent
     data object OpenSettingsClicked : HomeIntent
+
+    data object OpenRoutineClicked : HomeIntent
+    data object BriefExpandToggled : HomeIntent
+    data object PlansChangedClicked : HomeIntent
+    data class PlanDayTypeChanged(val dayType: DayType) : HomeIntent
+    data class PlanOutingToggled(val outingId: String, val going: Boolean) : HomeIntent
+    data object PlanAddOutingClicked : HomeIntent
+    data class PlanAddedOutingChanged(val outing: Outing) : HomeIntent
+    data class PlanAddedOutingRemoved(val outingId: String) : HomeIntent
+    data object PlanSaveClicked : HomeIntent
+    data object PlanResetClicked : HomeIntent
+    data object PlanDismissed : HomeIntent
 }
 
 sealed interface HomeEffect : UiEffect {
     data object NavigateToPlaces : HomeEffect
     data object NavigateToSettings : HomeEffect
+    data object NavigateToRoutine : HomeEffect
     data object RequestLocationPermission : HomeEffect
     data class ShowMessage(val message: UiText) : HomeEffect
 }
