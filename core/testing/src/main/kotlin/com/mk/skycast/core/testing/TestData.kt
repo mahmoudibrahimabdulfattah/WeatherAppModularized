@@ -64,10 +64,14 @@ object TestData {
                 condition = WeatherCondition.PARTLY_CLOUDY,
                 isDay = true,
                 temperatureC = temperatureC + offset % 5,
+                apparentTemperatureC = temperatureC + offset % 5 + 1,
+                relativeHumidity = 40,
                 precipitationProbability = 10,
                 precipitationMm = 0.0,
                 windSpeedKmh = 10.0,
+                windGustsKmh = 16.0,
                 uvIndex = 3.0,
+                visibilityMeters = 10_000.0,
             )
         },
         daily = (0..9).map { day ->

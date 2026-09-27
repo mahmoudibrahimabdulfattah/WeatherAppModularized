@@ -1,0 +1,499 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "1b7ebed8342b0b0e68be7c3ce7b15281",
+    "entities": [
+      {
+        "tableName": "locations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `externalId` INTEGER, `name` TEXT NOT NULL, `region` TEXT, `country` TEXT, `countryCode` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `timezone` TEXT, `isDeviceLocation` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, `nameLanguage` TEXT DEFAULT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "externalId",
+            "columnName": "externalId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "region",
+            "columnName": "region",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "country",
+            "columnName": "country",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "countryCode",
+            "columnName": "countryCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timezone",
+            "columnName": "timezone",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isDeviceLocation",
+            "columnName": "isDeviceLocation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameLanguage",
+            "columnName": "nameLanguage",
+            "affinity": "TEXT",
+            "defaultValue": "NULL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_locations_externalId",
+            "unique": true,
+            "columnNames": [
+              "externalId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_locations_externalId` ON `${TABLE_NAME}` (`externalId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "current_weather",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`locationId` INTEGER NOT NULL, `fetchedAtEpochMillis` INTEGER NOT NULL, `timezone` TEXT NOT NULL, `utcOffsetSeconds` INTEGER NOT NULL, `timeEpochSeconds` INTEGER NOT NULL, `weatherCode` INTEGER NOT NULL, `isDay` INTEGER NOT NULL, `temperatureC` REAL NOT NULL, `apparentTemperatureC` REAL NOT NULL, `relativeHumidity` INTEGER NOT NULL, `dewPointC` REAL, `precipitationMm` REAL NOT NULL, `cloudCover` INTEGER NOT NULL, `pressureHpa` REAL NOT NULL, `windSpeedKmh` REAL NOT NULL, `windDirectionDegrees` INTEGER NOT NULL, `windGustsKmh` REAL, `uvIndex` REAL, `visibilityMeters` REAL, `usAqi` INTEGER, `pm25` REAL, `pm10` REAL, PRIMARY KEY(`locationId`), FOREIGN KEY(`locationId`) REFERENCES `locations`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "locationId",
+            "columnName": "locationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetchedAtEpochMillis",
+            "columnName": "fetchedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timezone",
+            "columnName": "timezone",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "utcOffsetSeconds",
+            "columnName": "utcOffsetSeconds",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeEpochSeconds",
+            "columnName": "timeEpochSeconds",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weatherCode",
+            "columnName": "weatherCode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDay",
+            "columnName": "isDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureC",
+            "columnName": "temperatureC",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "apparentTemperatureC",
+            "columnName": "apparentTemperatureC",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relativeHumidity",
+            "columnName": "relativeHumidity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dewPointC",
+            "columnName": "dewPointC",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "precipitationMm",
+            "columnName": "precipitationMm",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cloudCover",
+            "columnName": "cloudCover",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pressureHpa",
+            "columnName": "pressureHpa",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windSpeedKmh",
+            "columnName": "windSpeedKmh",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windDirectionDegrees",
+            "columnName": "windDirectionDegrees",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windGustsKmh",
+            "columnName": "windGustsKmh",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "uvIndex",
+            "columnName": "uvIndex",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "visibilityMeters",
+            "columnName": "visibilityMeters",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "usAqi",
+            "columnName": "usAqi",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "pm25",
+            "columnName": "pm25",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "pm10",
+            "columnName": "pm10",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "locationId"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "locations",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "locationId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "hourly_forecast",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`locationId` INTEGER NOT NULL, `timeEpochSeconds` INTEGER NOT NULL, `weatherCode` INTEGER NOT NULL, `isDay` INTEGER NOT NULL, `temperatureC` REAL NOT NULL, `apparentTemperatureC` REAL DEFAULT NULL, `relativeHumidity` INTEGER DEFAULT NULL, `precipitationProbability` INTEGER, `precipitationMm` REAL NOT NULL, `windSpeedKmh` REAL NOT NULL, `windGustsKmh` REAL DEFAULT NULL, `uvIndex` REAL, `visibilityMeters` REAL DEFAULT NULL, PRIMARY KEY(`locationId`, `timeEpochSeconds`), FOREIGN KEY(`locationId`) REFERENCES `locations`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "locationId",
+            "columnName": "locationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeEpochSeconds",
+            "columnName": "timeEpochSeconds",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weatherCode",
+            "columnName": "weatherCode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDay",
+            "columnName": "isDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureC",
+            "columnName": "temperatureC",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "apparentTemperatureC",
+            "columnName": "apparentTemperatureC",
+            "affinity": "REAL",
+            "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "relativeHumidity",
+            "columnName": "relativeHumidity",
+            "affinity": "INTEGER",
+            "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "precipitationProbability",
+            "columnName": "precipitationProbability",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "precipitationMm",
+            "columnName": "precipitationMm",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windSpeedKmh",
+            "columnName": "windSpeedKmh",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windGustsKmh",
+            "columnName": "windGustsKmh",
+            "affinity": "REAL",
+            "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "uvIndex",
+            "columnName": "uvIndex",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "visibilityMeters",
+            "columnName": "visibilityMeters",
+            "affinity": "REAL",
+            "defaultValue": "NULL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "locationId",
+            "timeEpochSeconds"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "locations",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "locationId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "hourly_air_quality",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`locationId` INTEGER NOT NULL, `timeEpochSeconds` INTEGER NOT NULL, `usAqi` INTEGER DEFAULT NULL, `pm10` REAL DEFAULT NULL, `dust` REAL DEFAULT NULL, PRIMARY KEY(`locationId`, `timeEpochSeconds`), FOREIGN KEY(`locationId`) REFERENCES `locations`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "locationId",
+            "columnName": "locationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeEpochSeconds",
+            "columnName": "timeEpochSeconds",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "usAqi",
+            "columnName": "usAqi",
+            "affinity": "INTEGER",
+            "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "pm10",
+            "columnName": "pm10",
+            "affinity": "REAL",
+            "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "dust",
+            "columnName": "dust",
+            "affinity": "REAL",
+            "defaultValue": "NULL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "locationId",
+            "timeEpochSeconds"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "locations",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "locationId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "daily_forecast",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`locationId` INTEGER NOT NULL, `epochDay` INTEGER NOT NULL, `weatherCode` INTEGER NOT NULL, `temperatureMaxC` REAL NOT NULL, `temperatureMinC` REAL NOT NULL, `precipitationProbabilityMax` INTEGER, `precipitationSumMm` REAL NOT NULL, `sunriseEpochSeconds` INTEGER, `sunsetEpochSeconds` INTEGER, `uvIndexMax` REAL, `windSpeedMaxKmh` REAL NOT NULL, PRIMARY KEY(`locationId`, `epochDay`), FOREIGN KEY(`locationId`) REFERENCES `locations`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "locationId",
+            "columnName": "locationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "epochDay",
+            "columnName": "epochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weatherCode",
+            "columnName": "weatherCode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureMaxC",
+            "columnName": "temperatureMaxC",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureMinC",
+            "columnName": "temperatureMinC",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precipitationProbabilityMax",
+            "columnName": "precipitationProbabilityMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "precipitationSumMm",
+            "columnName": "precipitationSumMm",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sunriseEpochSeconds",
+            "columnName": "sunriseEpochSeconds",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "sunsetEpochSeconds",
+            "columnName": "sunsetEpochSeconds",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "uvIndexMax",
+            "columnName": "uvIndexMax",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "windSpeedMaxKmh",
+            "columnName": "windSpeedMaxKmh",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "locationId",
+            "epochDay"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "locations",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "locationId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1b7ebed8342b0b0e68be7c3ce7b15281')"
+    ]
+  }
+}

@@ -1,5 +1,6 @@
 package com.mk.skycast.core.database.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -60,10 +61,34 @@ data class HourlyForecastEntity(
     val weatherCode: Int,
     val isDay: Boolean,
     val temperatureC: Double,
+    @ColumnInfo(defaultValue = "NULL") val apparentTemperatureC: Double?,
+    @ColumnInfo(defaultValue = "NULL") val relativeHumidity: Int?,
     val precipitationProbability: Int?,
     val precipitationMm: Double,
     val windSpeedKmh: Double,
+    @ColumnInfo(defaultValue = "NULL") val windGustsKmh: Double?,
     val uvIndex: Double?,
+    @ColumnInfo(defaultValue = "NULL") val visibilityMeters: Double?,
+)
+
+@Entity(
+    tableName = "hourly_air_quality",
+    primaryKeys = ["locationId", "timeEpochSeconds"],
+    foreignKeys = [
+        ForeignKey(
+            entity = LocationEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["locationId"],
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
+)
+data class HourlyAirQualityEntity(
+    val locationId: Long,
+    val timeEpochSeconds: Long,
+    @ColumnInfo(defaultValue = "NULL") val usAqi: Int?,
+    @ColumnInfo(defaultValue = "NULL") val pm10: Double?,
+    @ColumnInfo(defaultValue = "NULL") val dust: Double?,
 )
 
 @Entity(
@@ -98,4 +123,6 @@ data class PopulatedWeather(
     val hourly: List<HourlyForecastEntity>,
     @Relation(parentColumn = "locationId", entityColumn = "locationId")
     val daily: List<DailyForecastEntity>,
+    @Relation(parentColumn = "locationId", entityColumn = "locationId")
+    val hourlyAirQuality: List<HourlyAirQualityEntity>,
 )
