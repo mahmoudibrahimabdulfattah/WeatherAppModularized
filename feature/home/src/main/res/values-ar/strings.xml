@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_brand">سكاي كاست</string>
+    <string name="home_settings">الإعدادات</string>
+    <string name="home_device">الموقع الحالي</string>
+    <string name="home_feels">المحسوسة %1$s</string>
+    <string name="home_high_low">العظمى: %1$s   الصغرى: %2$s</string>
+    <string name="home_local_time">التوقيت المحلي · %1$s</string>
+    <string name="home_just_now">تم التحديث الآن</string>
+    <string name="home_updated">تم التحديث قبل %1$s دقيقة</string>
+    <string name="home_stale">بانتظار تحديث الطقس</string>
+    <string name="home_hourly">التوقعات بالساعة</string>
+    <string name="home_daily">توقعات 10 أيام</string>
+    <string name="home_now">الآن</string>
+    <string name="home_today">اليوم</string>
+    <string name="home_details">نظرة أقرب</string>
+    <string name="home_feels_title">المحسوسة</string>
+    <string name="home_humidity">الرطوبة</string>
+    <string name="home_dew">نقطة الندى %1$s</string>
+    <string name="home_wind">الرياح</string>
+    <string name="home_gusts">الهبات %1$s</string>
+    <string name="home_uv">مؤشر الأشعة فوق البنفسجية</string>
+    <string name="home_pressure">الضغط الجوي</string>
+    <string name="home_visibility">مدى الرؤية</string>
+    <string name="home_precipitation">الهطول</string>
+    <string name="home_clouds">الغطاء السحابي</string>
+    <string name="home_air">جودة الهواء</string>
+    <string name="home_aqi">%1$s مؤشر جودة الهواء الأمريكي</string>
+    <string name="home_sun">الشروق والغروب</string>
+    <string name="home_sunrise">الشروق %1$s</string>
+    <string name="home_sunset">الغروب %1$s</string>
+    <string name="home_offline">غير متصل — تُعرض البيانات المحفوظة</string>
+    <string name="home_empty_title">سماؤك، أينما كنت</string>
+    <string name="home_empty_body">رؤية أوضح ليومك القادم. أضف موقعك لتعرف حالة الطقس.</string>
+    <string name="home_use_location">استخدم موقعي</string>
+    <string name="home_search">ابحث عن مدينة</string>
+    <string name="home_locating">جارٍ تحديد موقعك…</string>
+    <string name="home_loading">جارٍ تحميل توقعات الطقس…</string>
+    <string name="home_retry">حاول مجددًا</string>
+    <string name="home_page">الموقع %1$s من %2$s</string>
+    <string name="home_current_conditions">حالة الطقس الحالية</string>
+    <string name="home_wind_direction">الاتجاه %1$s</string>
+    <string name="home_today_total">إجمالي اليوم</string>
+    <string name="home_current">الآن</string>
+    <string name="home_daylight">ضوء النهار</string>
+</resources>

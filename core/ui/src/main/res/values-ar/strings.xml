@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_ui_error_no_internet">لا يوجد اتصال بالإنترنت</string>
+    <string name="core_ui_error_timeout">استغرق الطلب وقتًا طويلًا. حاول مرة أخرى.</string>
+    <string name="core_ui_error_server">خدمة الطقس غير متاحة حاليًا</string>
+    <string name="core_ui_error_not_found">غير موجود</string>
+    <string name="core_ui_error_unexpected">حدث خطأ ما</string>
+    <string name="core_ui_error_location_permission">مطلوب إذن الوصول إلى الموقع</string>
+    <string name="core_ui_error_location_disabled">فعّل خدمات الموقع</string>
+    <string name="core_ui_error_location_unavailable">تعذّر تحديد موقعك</string>
+
+    <string name="core_ui_clear">سماء صافية</string>
+    <string name="core_ui_mainly_clear">صافية غالبًا</string>
+    <string name="core_ui_partly_cloudy">غائمة جزئيًا</string>
+    <string name="core_ui_overcast">غائمة</string>
+    <string name="core_ui_fog">ضباب</string>
+    <string name="core_ui_drizzle">رذاذ</string>
+    <string name="core_ui_freezing_drizzle">رذاذ متجمد</string>
+    <string name="core_ui_rain">أمطار</string>
+    <string name="core_ui_freezing_rain">أمطار متجمدة</string>
+    <string name="core_ui_snow">ثلوج</string>
+    <string name="core_ui_snow_grains">حبيبات ثلجية</string>
+    <string name="core_ui_rain_showers">زخات مطر</string>
+    <string name="core_ui_snow_showers">زخات ثلج</string>
+    <string name="core_ui_thunderstorm">عاصفة رعدية</string>
+    <string name="core_ui_thunderstorm_hail">عاصفة رعدية مع بَرَد</string>
+    <string name="core_ui_unknown">حالة الطقس غير متاحة</string>
+    <string name="core_ui_unavailable">—</string>
+    <string name="core_ui_aqi_good">جيدة</string>
+    <string name="core_ui_aqi_moderate">متوسطة</string>
+    <string name="core_ui_aqi_sensitive">غير صحية للفئات الحساسة</string>
+    <string name="core_ui_aqi_unhealthy">غير صحية</string>
+    <string name="core_ui_aqi_very_unhealthy">غير صحية جدًا</string>
+    <string name="core_ui_aqi_hazardous">خطرة</string>
+    <string name="core_ui_uv_low">منخفض</string>
+    <string name="core_ui_uv_moderate">متوسط</string>
+    <string name="core_ui_uv_high">مرتفع</string>
+    <string name="core_ui_uv_very_high">مرتفع جدًا</string>
+    <string name="core_ui_uv_extreme">شديد جدًا</string>
+</resources>

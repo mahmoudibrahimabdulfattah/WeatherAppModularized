@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_back">رجوع</string>
+    <string name="settings_intro">الطقس بالطريقة التي تناسبك.</string>
+    <string name="settings_units">الوحدات</string>
+    <string name="settings_temperature">درجة الحرارة</string>
+    <string name="settings_wind">سرعة الرياح</string>
+    <string name="settings_precipitation">الهطول</string>
+    <string name="settings_pressure">الضغط الجوي</string>
+    <string name="settings_time">تنسيق الوقت</string>
+    <string name="settings_appearance">المظهر</string>
+    <string name="settings_theme">السمة</string>
+    <string name="settings_system">النظام</string>
+    <string name="settings_light">فاتح</string>
+    <string name="settings_dark">داكن</string>
+    <string name="settings_dynamic">ألوان ديناميكية</string>
+    <string name="settings_dynamic_hint">استخدم ألوان خلفية جهازك</string>
+    <string name="settings_about">عن سكاي كاست</string>
+    <string name="settings_version">الإصدار %1$s</string>
+    <string name="settings_source">بيانات الطقس من Open-Meteo.com ‏(CC BY 4.0)</string>
+    <string name="settings_promise">مجاني. بلا إعلانات. بلا تتبع.</string>
+    <string name="settings_celsius">°م</string>
+    <string name="settings_fahrenheit">°ف</string>
+    <string name="settings_kmh">كم/س</string>
+    <string name="settings_mph">ميل/س</string>
+    <string name="settings_ms">م/ث</string>
+    <string name="settings_kn">عقدة</string>
+    <string name="settings_mm">مم</string>
+    <string name="settings_in">بوصة</string>
+    <string name="settings_hpa">هكتوباسكال</string>
+    <string name="settings_inhg">بوصة زئبق</string>
+    <string name="settings_12h">12 ساعة</string>
+    <string name="settings_24h">24 ساعة</string>
+    <string name="settings_loading">جارٍ تحميل التفضيلات…</string>
+    <string name="settings_version_unknown">غير معروف</string>
+    <string name="settings_language">اللغة</string>
+</resources>
