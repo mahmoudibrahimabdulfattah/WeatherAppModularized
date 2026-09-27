@@ -29,6 +29,7 @@ internal fun WeatherPageContent(
     formatter: WeatherFormatter,
     modifier: Modifier = Modifier,
     brief: (@Composable () -> Unit)? = null,
+    ask: (@Composable () -> Unit)? = null,
 ) {
     BoxWithConstraints(modifier.fillMaxSize()) {
         if (maxWidth >= SkySpace.paneBreakpoint) {
@@ -51,6 +52,7 @@ internal fun WeatherPageContent(
                     verticalArrangement = Arrangement.spacedBy(SkySpace.medium),
                 ) {
                     brief?.invoke()
+                    ask?.invoke()
                     ForecastSections(page, now, formatter)
                 }
             }
@@ -65,6 +67,7 @@ internal fun WeatherPageContent(
             ) {
                 WeatherHero(page, now, formatter)
                 brief?.invoke()
+                ask?.invoke()
                 ForecastSections(page, now, formatter)
             }
         }

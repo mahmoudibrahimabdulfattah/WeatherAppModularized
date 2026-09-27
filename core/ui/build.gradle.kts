@@ -6,4 +6,5 @@ dependencies {
     api(project(":core:model"))
     api(project(":core:designsystem"))
     implementation(project(":core:common"))
+    implementation(project(":core:domain"))
 }

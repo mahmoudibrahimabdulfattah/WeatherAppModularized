@@ -1,5 +1,8 @@
 package com.mk.skycast.feature.home
 
+import com.mk.skycast.core.domain.ask.AskAnswer
+import com.mk.skycast.core.domain.ask.AskQuestion
+import com.mk.skycast.core.domain.ask.ExerciseKind
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
 import com.mk.skycast.core.model.DailyBrief
 import com.mk.skycast.core.model.DailyForecast
@@ -17,6 +20,7 @@ import com.mk.skycast.core.mvi.UiState
 import com.mk.skycast.core.ui.text.UiText
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 
 data class HomeState(
     val isLoading: Boolean = true,
@@ -37,6 +41,8 @@ data class HomeState(
     val isBriefExpanded: Boolean = false,
     /** Open "plans changed?" sheet, or null. */
     val planEditor: PlanEditor? = null,
+    /** Open Ask Skycast sheet, or null. */
+    val askSheet: AskSheetState? = null,
 ) : UiState {
     val showRoutinePrompt: Boolean get() = routine?.isConfigured == false
 
@@ -47,6 +53,14 @@ data class HomeState(
     val isEmpty: Boolean get() = !isLoading && pages.isEmpty()
     val selectedPage: WeatherPage? get() = pages.getOrNull(selectedIndex)
 }
+
+data class AskSheetState(
+    val location: SavedLocation,
+    val zoneId: ZoneId,
+    val question: AskQuestion? = null,
+    val exercise: ExerciseKind = ExerciseKind.WALK,
+    val answer: AskAnswer? = null,
+)
 
 /** One-day change of plans, edited as a draft until saved. */
 data class PlanEditor(
@@ -90,6 +104,10 @@ sealed interface HomeIntent : UiIntent {
     data object OpenRoutineClicked : HomeIntent
     data object BriefExpandToggled : HomeIntent
     data object PlansChangedClicked : HomeIntent
+    data class AskOpened(val locationId: Long) : HomeIntent
+    data class AskQuestionSelected(val question: AskQuestion) : HomeIntent
+    data class AskExerciseSelected(val exercise: ExerciseKind) : HomeIntent
+    data object AskDismissed : HomeIntent
 
     /** From the notification: open the sheet as soon as the routine is loaded. */
     data object OpenPlansRequested : HomeIntent

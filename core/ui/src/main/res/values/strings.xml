@@ -122,4 +122,65 @@
     <string name="brief_kind_outing">Outing</string>
     <string name="brief_kind_family">Family visit</string>
     <string name="brief_kind_prayer">Prayer</string>
+
+    <!-- Ask Skycast -->
+    <string name="ask_question_wear">What should I wear tomorrow?</string>
+    <string name="ask_question_exercise">Best time for a walk or run?</string>
+    <string name="ask_question_heat">When can I avoid the strongest heat?</string>
+    <string name="ask_question_laundry">Best time to hang laundry outside?</string>
+    <string name="ask_question_rain">Any rain in the next 3 days?</string>
+    <string name="ask_question_air">What\'s the air quality today?</string>
+    <string name="ask_exercise_walk">Walk</string>
+    <string name="ask_exercise_run">Run</string>
+    <string name="ask_exercise_cycle">Cycle</string>
+    <string name="ask_day_window">%1$s %2$s–%3$s</string>
+    <string name="ask_date_range">%1$s–%2$s</string>
+    <string name="ask_wear_setup_headline">Set up your routine first</string>
+    <string name="ask_exercise_headline_walk">Best time for a walk: %1$s</string>
+    <string name="ask_exercise_headline_run">Best time for a run: %1$s</string>
+    <string name="ask_exercise_headline_cycle">Best time for a ride: %1$s</string>
+    <string name="ask_exercise_none">No comfortable exercise window found</string>
+    <string name="ask_heat_headline">Stay out of the sun %2$s — it feels like %1$s</string>
+    <string name="ask_heat_none">No strong heat; the peak feels like %1$s.</string>
+    <string name="ask_laundry_headline">Best outdoor laundry window: %1$s</string>
+    <string name="ask_laundry_none">No clean, dry 3-hour window found</string>
+    <string name="ask_rain_headline_yes">Rain is possible in the next 3 days</string>
+    <string name="ask_rain_headline_no">No notable rain in the next 3 days</string>
+    <string name="ask_air_headline">Air quality is %1$s</string>
+    <string name="ask_air_unavailable">Air quality data is unavailable</string>
+    <string name="ask_chip_setup_routine">Routine required</string>
+    <string name="ask_chip_feels">Feels %1$s</string>
+    <plurals name="ask_chip_alternatives">
+        <item quantity="one">%1$s alternative</item>
+        <item quantity="other">%1$s alternatives</item>
+    </plurals>
+    <string name="ask_chip_peak">Peak %1$s</string>
+    <plurals name="ask_chip_cooler">
+        <item quantity="one">%1$s cooler window</item>
+        <item quantity="other">%1$s cooler windows</item>
+    </plurals>
+    <string name="ask_chip_daytime">Daytime only</string>
+    <string name="ask_chip_rain_day">%1$s · %2$s · %3$s</string>
+    <string name="ask_chip_aqi">%1$s US AQI</string>
+    <string name="ask_chip_pm10">PM10 %1$s</string>
+    <string name="ask_chip_dust">Dust %1$s</string>
+    <string name="ask_reason_setup_routine">What-to-wear depends on your usual commute and outings.</string>
+    <string name="ask_reason_comfortable_temp">Temperature is inside the comfort band.</string>
+    <string name="ask_reason_no_rain">Rain stays below the threshold.</string>
+    <string name="ask_reason_low_uv">UV is manageable for the time of day.</string>
+    <string name="ask_reason_calm_wind">Wind and gusts stay calm enough.</string>
+    <string name="ask_reason_clean_air">Air and dust readings are acceptable.</string>
+    <string name="ask_reason_low_humidity">Humidity is favorable for drying.</string>
+    <string name="ask_reason_good_wind">Wind is useful without being too strong.</string>
+    <string name="ask_reason_avoids_peak_heat">This avoids the hottest hours.</string>
+    <string name="ask_reason_cooler_time">This is a cooler part of the day.</string>
+    <string name="ask_reason_rain_expected">Rain crosses the threshold.</string>
+    <string name="ask_reason_air_unavailable">Missing data never means the air is good.</string>
+    <string name="ask_reason_limited_forecast">The available forecast does not show a good window.</string>
+    <string name="ask_reason_cooler_window">Cooler option: %1$s.</string>
+    <string name="ask_reason_first_rain">%1$s first looks rainy around %2$s.</string>
+    <string name="ask_reason_dust_peak">Dust peaks around %1$s.</string>
+    <string name="ask_coverage_full">full coverage</string>
+    <string name="ask_coverage_partial">limited coverage</string>
+    <string name="ask_freshness">Based on forecast from %1$s · %2$s</string>
 </resources>

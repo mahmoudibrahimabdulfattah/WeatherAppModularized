@@ -3,6 +3,8 @@ package com.mk.skycast.feature.home
 import androidx.lifecycle.viewModelScope
 import com.mk.skycast.core.common.Outcome
 import com.mk.skycast.core.common.TimeTicker
+import com.mk.skycast.core.domain.ask.AnswerAskQuestionUseCase
+import com.mk.skycast.core.domain.ask.AskQuestion
 import com.mk.skycast.core.domain.brief.ExposurePlanner
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
 import com.mk.skycast.core.domain.usecase.ClearDayOverrideUseCase
@@ -54,6 +56,7 @@ class HomeViewModel @Inject constructor(
     observeDailyBrief: ObserveDailyBriefUseCase,
     observeRoutine: ObserveRoutineUseCase,
     observeDayOverrides: ObserveDayOverridesUseCase,
+    private val answerAskQuestion: AnswerAskQuestionUseCase,
     private val setDayOverride: SetDayOverrideUseCase,
     private val clearDayOverride: ClearDayOverrideUseCase,
     private val clock: Clock,
@@ -128,6 +131,19 @@ class HomeViewModel @Inject constructor(
 
             HomeIntent.PlansChangedClicked -> openPlanEditor()
 
+            is HomeIntent.AskOpened -> openAskSheet(intent.locationId)
+
+            is HomeIntent.AskQuestionSelected -> selectAskQuestion(intent.question)
+
+            is HomeIntent.AskExerciseSelected -> {
+                reduce { copy(askSheet = askSheet?.copy(exercise = intent.exercise)) }
+                if (currentState.askSheet?.question == AskQuestion.BEST_EXERCISE_TIME) {
+                    selectAskQuestion(AskQuestion.BEST_EXERCISE_TIME)
+                }
+            }
+
+            HomeIntent.AskDismissed -> reduce { copy(askSheet = null) }
+
             HomeIntent.OpenPlansRequested ->
                 if (currentState.routine?.isConfigured == true) openPlanEditor() else pendingOpenPlans = true
 
@@ -158,6 +174,21 @@ class HomeViewModel @Inject constructor(
             HomeIntent.PlanResetClicked -> resetPlan()
 
             HomeIntent.PlanDismissed -> reduce { copy(planEditor = null) }
+        }
+    }
+
+    private fun openAskSheet(locationId: Long) {
+        val page = currentState.pages.firstOrNull { it.location.id == locationId } ?: return
+        val weather = page.weather ?: return
+        reduce { copy(askSheet = AskSheetState(location = page.location, zoneId = weather.zoneId)) }
+    }
+
+    private fun selectAskQuestion(question: AskQuestion) {
+        val sheet = currentState.askSheet ?: return
+        reduce { copy(askSheet = sheet.copy(question = question, answer = null)) }
+        viewModelScope.launch {
+            val answer = answerAskQuestion(question, currentState.askSheet?.exercise, clock.instant()) ?: return@launch
+            reduce { copy(askSheet = askSheet?.copy(answer = answer)) }
         }
     }
 

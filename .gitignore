@@ -12,3 +12,6 @@ build/
 *.keystore
 *.jks
 keystore.properties
+
+# Firebase config (public repo): provided locally and to CI via secret
+/app/google-services.json

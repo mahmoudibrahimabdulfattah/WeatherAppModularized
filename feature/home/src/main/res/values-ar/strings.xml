@@ -67,7 +67,7 @@
     <string name="home_brief_partial">جزء من يومك خارج نطاق التوقعات الحالية؛ تحقّق لاحقًا.</string>
     <string name="home_brief_based_on">بحسب توقعات الساعة %1$s</string>
     <string name="home_brief_prompt_title">كن مستعدًا للغد</string>
-    <string name="home_brief_prompt_body">أخبر Skycast بأوقات خروجك المعتادة، واحصل كل ليلة على ملخص بما تلبسه وما تحمله ومتى يتغير الطقس.</string>
+    <string name="home_brief_prompt_body">أخبر سكاي كاست بأوقات خروجك المعتادة، واحصل كل ليلة على ملخص بما تلبسه وما تحمله ومتى يتغير الطقس.</string>
     <string name="home_brief_prompt_action">إعداد روتيني</string>
     <string name="home_plan_title">خطط يوم %1$s</string>
     <string name="home_plan_hint">يتغير هذا اليوم فقط، ويبقى روتينك كما هو.</string>
@@ -84,4 +84,9 @@
     <string name="home_plan_indoors">داخل مكان مغلق</string>
     <string name="home_plan_reset">العودة إلى الروتين</string>
     <string name="home_plan_save">حفظ لهذا اليوم</string>
+    <string name="home_ask_entry_title">اسأل سكاي كاست</string>
+    <string name="home_ask_entry_subtitle">إجابات يومية لـ %1$s</string>
+    <string name="home_ask_title">اسأل سكاي كاست</string>
+    <string name="home_ask_context">%1$s · %2$s</string>
+    <string name="home_ask_why">لماذا هذه الإجابة؟</string>
 </resources>

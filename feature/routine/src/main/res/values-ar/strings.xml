@@ -9,7 +9,7 @@
     <string name="routine_step_of">الخطوة %1$d من %2$d</string>
     <string name="routine_list_separator">، </string>
 
-    <string name="routine_week_intro">أخبر Skycast كيف يمضي أسبوعك عادةً، ليكون كل ملخص عن الساعات التي تقضيها خارج المنزل فعلًا.</string>
+    <string name="routine_week_intro">أخبر سكاي كاست كيف يمضي أسبوعك عادةً، ليكون كل ملخص عن الساعات التي تقضيها خارج المنزل فعلًا.</string>
     <string name="routine_week">أسبوعك</string>
     <string name="routine_day_away">عمل/دراسة</string>
     <string name="routine_day_home">المنزل</string>
@@ -52,7 +52,7 @@
     <string name="routine_delete">حذف</string>
     <string name="routine_save_outing">حفظ الخروجة</string>
 
-    <string name="routine_brief_intro">كل مساء يجهّزك Skycast للغد: ماذا تلبس، وماذا تحمل، ومتى يتغير الطقس.</string>
+    <string name="routine_brief_intro">كل مساء يجهّزك سكاي كاست للغد: ماذا تلبس، وماذا تحمل، ومتى يتغير الطقس.</string>
     <string name="routine_brief">الملخص الليلي</string>
     <string name="routine_brief_time">وقت الملخص</string>
     <string name="routine_morning_refresh">حدّثني في الصباح</string>
