@@ -82,6 +82,7 @@ internal class OfflineFirstWeatherRepository @Inject constructor(
                     current = data.toCurrentEntity(locationId, clock.instant(), air),
                     hourly = data.toHourlyEntities(locationId),
                     daily = data.toDailyEntities(locationId),
+                    hourlyAirQuality = air.toHourlyEntities(locationId),
                 )
                 if (locationDao.getById(locationId)?.timezone == null) {
                     locationDao.getById(locationId)?.let { locationDao.upsert(it.copy(timezone = data.timezone)) }

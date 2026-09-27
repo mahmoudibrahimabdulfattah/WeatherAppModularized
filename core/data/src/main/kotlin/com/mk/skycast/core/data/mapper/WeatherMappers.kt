@@ -2,11 +2,13 @@ package com.mk.skycast.core.data.mapper
 
 import com.mk.skycast.core.database.entity.CurrentWeatherEntity
 import com.mk.skycast.core.database.entity.DailyForecastEntity
+import com.mk.skycast.core.database.entity.HourlyAirQualityEntity
 import com.mk.skycast.core.database.entity.HourlyForecastEntity
 import com.mk.skycast.core.database.entity.PopulatedWeather
 import com.mk.skycast.core.model.AirQuality
 import com.mk.skycast.core.model.CurrentWeather
 import com.mk.skycast.core.model.DailyForecast
+import com.mk.skycast.core.model.HourlyAirQuality
 import com.mk.skycast.core.model.HourlyForecast
 import com.mk.skycast.core.model.Weather
 import com.mk.skycast.core.model.WeatherCondition
@@ -55,12 +57,29 @@ internal fun NetworkForecast.toHourlyEntities(locationId: Long): List<HourlyFore
             weatherCode = hourly.weatherCode.getOrNull(i) ?: -1,
             isDay = hourly.isDay.getOrNull(i) == 1,
             temperatureC = temperature,
+            apparentTemperatureC = hourly.apparentTemperature.getOrNull(i),
+            relativeHumidity = hourly.relativeHumidity.getOrNull(i),
             precipitationProbability = hourly.precipitationProbability.getOrNull(i),
             precipitationMm = hourly.precipitation.getOrNull(i) ?: 0.0,
             windSpeedKmh = hourly.windSpeed.getOrNull(i) ?: 0.0,
+            windGustsKmh = hourly.windGusts.getOrNull(i),
             uvIndex = hourly.uvIndex.getOrNull(i),
+            visibilityMeters = hourly.visibility.getOrNull(i),
         )
     }
+
+internal fun NetworkAirQuality?.toHourlyEntities(locationId: Long): List<HourlyAirQualityEntity> {
+    val hourly = this?.hourly ?: return emptyList()
+    return hourly.time.mapIndexed { i, time ->
+        HourlyAirQualityEntity(
+            locationId = locationId,
+            timeEpochSeconds = time,
+            usAqi = hourly.usAqi.getOrNull(i),
+            pm10 = hourly.pm10.getOrNull(i),
+            dust = hourly.dust.getOrNull(i),
+        )
+    }
+}
 
 internal fun NetworkForecast.toDailyEntities(locationId: Long): List<DailyForecastEntity> {
     val offset = ZoneOffset.ofTotalSeconds(utcOffsetSeconds)
@@ -112,10 +131,14 @@ internal fun PopulatedWeather.toDomain(): Weather = Weather(
             condition = WeatherCondition.fromWmoCode(it.weatherCode),
             isDay = it.isDay,
             temperatureC = it.temperatureC,
+            apparentTemperatureC = it.apparentTemperatureC,
+            relativeHumidity = it.relativeHumidity,
             precipitationProbability = it.precipitationProbability,
             precipitationMm = it.precipitationMm,
             windSpeedKmh = it.windSpeedKmh,
+            windGustsKmh = it.windGustsKmh,
             uvIndex = it.uvIndex,
+            visibilityMeters = it.visibilityMeters,
         )
     },
     daily = daily.sortedBy { it.epochDay }.map {
@@ -132,10 +155,24 @@ internal fun PopulatedWeather.toDomain(): Weather = Weather(
             windSpeedMaxKmh = it.windSpeedMaxKmh,
         )
     },
-    airQuality = if (current.usAqi == null && current.pm25 == null && current.pm10 == null) {
+    airQuality = if (current.usAqi == null && current.pm25 == null && current.pm10 == null &&
+        hourlyAirQuality.isEmpty()
+    ) {
         null
     } else {
-        AirQuality(current.usAqi, current.pm25, current.pm10)
+        AirQuality(
+            usAqi = current.usAqi,
+            pm25 = current.pm25,
+            pm10 = current.pm10,
+            hourly = hourlyAirQuality.sortedBy { it.timeEpochSeconds }.map {
+                HourlyAirQuality(
+                    time = Instant.ofEpochSecond(it.timeEpochSeconds),
+                    usAqi = it.usAqi,
+                    pm10 = it.pm10,
+                    dust = it.dust,
+                )
+            },
+        )
     },
     fetchedAt = Instant.ofEpochMilli(current.fetchedAtEpochMillis),
 )

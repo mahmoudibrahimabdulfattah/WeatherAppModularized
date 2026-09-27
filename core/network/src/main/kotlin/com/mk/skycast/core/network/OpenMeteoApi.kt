@@ -28,6 +28,8 @@ internal interface OpenMeteoApi {
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("current") current: String = "us_aqi,pm2_5,pm10",
+        @Query("hourly") hourly: String = "us_aqi,pm10,dust",
+        @Query("forecast_days") forecastDays: Int = 3,
         @Query("timeformat") timeFormat: String = "unixtime",
     ): NetworkAirQuality
 
@@ -48,8 +50,8 @@ internal interface OpenMeteoApi {
         const val CURRENT_FIELDS = "temperature_2m,relative_humidity_2m,apparent_temperature,dew_point_2m," +
             "is_day,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m," +
             "wind_direction_10m,wind_gusts_10m,uv_index,visibility"
-        const val HOURLY_FIELDS = "temperature_2m,weather_code,is_day,precipitation_probability," +
-            "precipitation,wind_speed_10m,uv_index"
+        const val HOURLY_FIELDS = "temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,is_day," +
+            "precipitation_probability,precipitation,wind_speed_10m,wind_gusts_10m,uv_index,visibility"
         const val DAILY_FIELDS = "weather_code,temperature_2m_max,temperature_2m_min," +
             "precipitation_probability_max,precipitation_sum,sunrise,sunset,uv_index_max,wind_speed_10m_max"
     }

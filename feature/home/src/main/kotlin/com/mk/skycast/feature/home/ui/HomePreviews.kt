@@ -56,10 +56,14 @@ private object HomePreviewData {
                 condition = if (rainy) WeatherCondition.RAIN_SHOWERS else WeatherCondition.PARTLY_CLOUDY,
                 isDay = index < 5 || index > 16,
                 temperatureC = temperature,
+                apparentTemperatureC = temperature + 1,
+                relativeHumidity = 48,
                 precipitationProbability = if (rainy) 35 else 5,
                 precipitationMm = 0.0,
                 windSpeedKmh = 14.0,
+                windGustsKmh = 22.0,
                 uvIndex = 6.0,
+                visibilityMeters = 16_000.0,
             )
         },
         daily = (0..9).map { index ->

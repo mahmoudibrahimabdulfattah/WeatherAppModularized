@@ -41,10 +41,14 @@ data class HourlyForecast(
     val condition: WeatherCondition,
     val isDay: Boolean,
     val temperatureC: Double,
+    val apparentTemperatureC: Double?,
+    val relativeHumidity: Int?,
     val precipitationProbability: Int?,
     val precipitationMm: Double,
     val windSpeedKmh: Double,
+    val windGustsKmh: Double?,
     val uvIndex: Double?,
+    val visibilityMeters: Double?,
 )
 
 data class DailyForecast(
@@ -60,9 +64,16 @@ data class DailyForecast(
     val windSpeedMaxKmh: Double,
 )
 
-data class AirQuality(val usAqi: Int?, val pm25: Double?, val pm10: Double?) {
+data class AirQuality(
+    val usAqi: Int?,
+    val pm25: Double?,
+    val pm10: Double?,
+    val hourly: List<HourlyAirQuality> = emptyList(),
+) {
     val level: AirQualityLevel? get() = usAqi?.let(AirQualityLevel::fromUsAqi)
 }
+
+data class HourlyAirQuality(val time: Instant, val usAqi: Int?, val pm10: Double?, val dust: Double?)
 
 enum class AirQualityLevel {
     GOOD,

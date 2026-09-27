@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.mk.skycast.core.database.entity.CurrentWeatherEntity
 import com.mk.skycast.core.database.entity.DailyForecastEntity
+import com.mk.skycast.core.database.entity.HourlyAirQualityEntity
 import com.mk.skycast.core.database.entity.HourlyForecastEntity
 import com.mk.skycast.core.database.entity.PopulatedWeather
 import kotlinx.coroutines.flow.Flow
@@ -31,11 +32,17 @@ interface WeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDaily(entities: List<DailyForecastEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertHourlyAirQuality(entities: List<HourlyAirQualityEntity>)
+
     @Query("DELETE FROM hourly_forecast WHERE locationId = :locationId")
     suspend fun deleteHourly(locationId: Long)
 
     @Query("DELETE FROM daily_forecast WHERE locationId = :locationId")
     suspend fun deleteDaily(locationId: Long)
+
+    @Query("DELETE FROM hourly_air_quality WHERE locationId = :locationId")
+    suspend fun deleteHourlyAirQuality(locationId: Long)
 
     /** Atomically replaces the whole snapshot so observers never see a half-written state. */
     @Transaction
@@ -43,11 +50,14 @@ interface WeatherDao {
         current: CurrentWeatherEntity,
         hourly: List<HourlyForecastEntity>,
         daily: List<DailyForecastEntity>,
+        hourlyAirQuality: List<HourlyAirQualityEntity>,
     ) {
         upsertCurrent(current)
         deleteHourly(current.locationId)
         deleteDaily(current.locationId)
+        deleteHourlyAirQuality(current.locationId)
         insertHourly(hourly)
         insertDaily(daily)
+        insertHourlyAirQuality(hourlyAirQuality)
     }
 }
