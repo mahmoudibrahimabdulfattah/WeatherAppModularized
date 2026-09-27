@@ -65,6 +65,7 @@ internal class FirebaseAdviceGenerator @Inject constructor() : AdviceGenerator {
             practical sentences for the user, in the language given (formal Modern Standard Arabic for "ar").
             Use only the facts provided. Never add numbers, times, temperatures, advice or warnings that are
             not in the facts, never contradict them, and never promise safety. Do not greet the user.
+            Write every number exactly as it appears in the facts, as digits; never spell numbers out in words.
             No emojis, no markdown, no lists.
         """.trimIndent()
     }

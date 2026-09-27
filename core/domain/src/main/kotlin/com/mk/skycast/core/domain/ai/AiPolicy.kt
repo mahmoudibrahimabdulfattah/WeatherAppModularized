@@ -30,8 +30,18 @@ object AiPolicy {
             .trim()
         if (text.isEmpty() || text.length > MAX_OUTPUT_CHARS) return null
         val allowed = numbers(request.allowedText)
+        if (SPELLED_NUMBER.containsMatchIn(text)) return null
         return text.takeIf { numbers(it).all { number -> number in allowed } }
     }
+
+    /** Spelled-out numbers would slip past the digit check, so they are not allowed at all. */
+    private val SPELLED_NUMBER = Regex(
+        "\\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|" +
+            "seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred)\\b|" +
+            // Whole Arabic words only (optional و/ب/ل/ف/ك and ال), so weekdays like الثلاثاء don't match.
+            "(?<!\\p{L})[وبلفك]?(ال)?(ثلاث|أربع|خمس|ست|سبع|ثماني?|تسع|عشر|مائة|مئة)(ة|ون|ين)?(?!\\p{L})",
+        RegexOption.IGNORE_CASE,
+    )
 
     private fun numbers(text: String): Set<String> = Regex("\\d+").findAll(toLatinDigits(text)).map { it.value }.toSet()
 

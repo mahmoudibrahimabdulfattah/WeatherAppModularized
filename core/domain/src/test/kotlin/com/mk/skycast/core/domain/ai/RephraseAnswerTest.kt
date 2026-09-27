@@ -32,6 +32,14 @@ class RephraseAnswerTest {
     }
 
     @Test
+    fun `spelled-out numbers are rejected`() {
+        assertThat(AiPolicy.validate("It feels like twenty-two degrees.", request)).isNull()
+        assertThat(AiPolicy.validate("تبلغ نسبة الغبار خمسة عشر ميكروغرامًا", request)).isNull()
+        assertThat(AiPolicy.validate("ستكون الأجواء جافة يوم الثلاثاء والأربعاء، ويمكنك الاستمتاع بها.", request))
+            .isNotNull()
+    }
+
+    @Test
     fun `arabic-indic digits are checked like latin ones`() {
         assertThat(AiPolicy.validate("اخرج الساعة ٦:٠٠", request)).isNotNull()
         assertThat(AiPolicy.validate("اخرج الساعة ٩", request)).isNull()
