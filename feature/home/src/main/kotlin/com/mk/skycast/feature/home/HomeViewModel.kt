@@ -62,6 +62,7 @@ class HomeViewModel @Inject constructor(
 
     private var autoRefreshJob: Job? = null
     private var hasAttemptedAutoLocate = false
+    private var pendingOpenPlans = false
 
     init {
         combine(
@@ -86,6 +87,10 @@ class HomeViewModel @Inject constructor(
 
         combine(observeRoutine(), observeDayOverrides(), observeDailyBrief()) { routine, overrides, brief ->
             reduce { copy(routine = routine, overrides = overrides, brief = brief) }
+            if (pendingOpenPlans && routine.isConfigured) {
+                pendingOpenPlans = false
+                openPlanEditor()
+            }
         }.launchIn(viewModelScope)
 
         observeNetworkStatus()
@@ -122,6 +127,9 @@ class HomeViewModel @Inject constructor(
             HomeIntent.BriefExpandToggled -> reduce { copy(isBriefExpanded = !isBriefExpanded) }
 
             HomeIntent.PlansChangedClicked -> openPlanEditor()
+
+            HomeIntent.OpenPlansRequested ->
+                if (currentState.routine?.isConfigured == true) openPlanEditor() else pendingOpenPlans = true
 
             is HomeIntent.PlanDayTypeChanged -> editPlan { copy(dayType = intent.dayType) }
 

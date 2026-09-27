@@ -90,6 +90,9 @@ sealed interface HomeIntent : UiIntent {
     data object OpenRoutineClicked : HomeIntent
     data object BriefExpandToggled : HomeIntent
     data object PlansChangedClicked : HomeIntent
+
+    /** From the notification: open the sheet as soon as the routine is loaded. */
+    data object OpenPlansRequested : HomeIntent
     data class PlanDayTypeChanged(val dayType: DayType) : HomeIntent
     data class PlanOutingToggled(val outingId: String, val going: Boolean) : HomeIntent
     data object PlanAddOutingClicked : HomeIntent

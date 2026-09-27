@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -24,6 +25,8 @@ fun HomeRoute(
     onOpenPlaces: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenRoutine: () -> Unit,
+    openPlans: Boolean,
+    onConsumeOpenPlans: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -36,6 +39,14 @@ fun HomeRoute(
 
     val languageCode = LocalConfiguration.current.locales[0].language
     LaunchedEffect(languageCode) { viewModel.onIntent(HomeIntent.DisplayLanguageChanged(languageCode)) }
+
+    val consumeOpenPlans by rememberUpdatedState(onConsumeOpenPlans)
+    LaunchedEffect(openPlans) {
+        if (openPlans) {
+            viewModel.onIntent(HomeIntent.OpenPlansRequested)
+            consumeOpenPlans()
+        }
+    }
 
     LifecycleResumeEffect(Unit) {
         viewModel.onIntent(HomeIntent.ScreenResumed)

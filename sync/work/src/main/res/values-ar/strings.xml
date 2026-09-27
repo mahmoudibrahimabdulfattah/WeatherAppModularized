@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="brief_channel_name">الاستعداد اليومي</string>
+    <string name="brief_channel_description">ملخصك الليلي بما تلبسه وتحمله غدًا</string>
+    <string name="brief_update_title">تحديث · %1$s</string>
+    <string name="brief_action_view">عرض الملخص</string>
+    <string name="brief_action_plans">تغيّرت خططك؟</string>
+</resources>

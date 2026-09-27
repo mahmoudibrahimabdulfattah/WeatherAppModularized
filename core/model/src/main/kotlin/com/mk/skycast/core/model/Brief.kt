@@ -110,3 +110,9 @@ enum class ForecastCoverage {
     /** Some windows fall outside the stored hourly forecast. */
     PARTIAL,
 }
+
+/**
+ * What a notified brief told the user to act on. Two briefs with the same
+ * fingerprint need no new notification — temperature drift alone stays silent.
+ */
+data class BriefFingerprint(val date: LocalDate, val keys: Set<String>)
