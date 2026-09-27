@@ -92,7 +92,7 @@ class RoutineViewModel @Inject constructor(
             val routine = current.draft.copy(isConfigured = true)
             viewModelScope.launch {
                 saveRoutine(routine)
-                emitEffect(RoutineEffect.Close)
+                emitEffect(RoutineEffect.Saved)
             }
         } else {
             reduce { copy(step = RoutineStep.entries[step.ordinal + 1]) }

@@ -6,6 +6,8 @@ import com.mk.skycast.core.common.Outcome
 import com.mk.skycast.core.common.TimeTicker
 import com.mk.skycast.core.common.map
 import com.mk.skycast.core.domain.repository.AppLanguageRepository
+import com.mk.skycast.core.domain.repository.BriefHistoryRepository
+import com.mk.skycast.core.domain.repository.BriefScheduler
 import com.mk.skycast.core.domain.repository.DeviceLocationProvider
 import com.mk.skycast.core.domain.repository.LocationRepository
 import com.mk.skycast.core.domain.repository.NetworkMonitor
@@ -15,6 +17,7 @@ import com.mk.skycast.core.domain.repository.UserPreferencesRepository
 import com.mk.skycast.core.domain.repository.WeatherRepository
 import com.mk.skycast.core.domain.repository.WeatherSyncScheduler
 import com.mk.skycast.core.model.AppLanguage
+import com.mk.skycast.core.model.BriefFingerprint
 import com.mk.skycast.core.model.DayPlanOverride
 import com.mk.skycast.core.model.DeviceLocation
 import com.mk.skycast.core.model.PlaceSuggestion
@@ -197,5 +200,20 @@ class FakeRoutineRepository(initial: Routine = Routine()) : RoutineRepository {
             it.date ==
                 date
         }
+    }
+}
+
+class FakeBriefHistoryRepository : BriefHistoryRepository {
+    var last: BriefFingerprint? = null
+    override suspend fun lastNotified(): BriefFingerprint? = last
+    override suspend fun saveNotified(fingerprint: BriefFingerprint) {
+        last = fingerprint
+    }
+}
+
+class FakeBriefScheduler : BriefScheduler {
+    val scheduled = mutableListOf<Routine>()
+    override fun schedule(routine: Routine, overrides: List<DayPlanOverride>, now: java.time.Instant) {
+        scheduled += routine
     }
 }

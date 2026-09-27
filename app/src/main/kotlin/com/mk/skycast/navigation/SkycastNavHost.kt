@@ -14,13 +14,15 @@ import com.mk.skycast.feature.settings.navigation.settingsScreen
 
 /** The app module is the only place that knows about every feature and wires them together. */
 @Composable
-fun SkycastNavHost() {
+fun SkycastNavHost(openPlans: Boolean = false, onConsumeOpenPlans: () -> Unit = {}) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = HomeDestination) {
         homeScreen(
             onOpenPlaces = { navController.navigate(PlacesDestination) { launchSingleTop = true } },
             onOpenSettings = { navController.navigate(SettingsDestination) { launchSingleTop = true } },
             onOpenRoutine = { navController.navigate(RoutineDestination) { launchSingleTop = true } },
+            openPlans = openPlans,
+            onConsumeOpenPlans = onConsumeOpenPlans,
         )
         placesScreen(onBack = { navController.popBackStack() })
         settingsScreen(

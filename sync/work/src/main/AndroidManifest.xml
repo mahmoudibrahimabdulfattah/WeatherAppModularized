@@ -1,2 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The nightly brief. Requested in context when the routine is saved. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+</manifest>

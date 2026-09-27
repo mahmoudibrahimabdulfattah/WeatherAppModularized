@@ -105,7 +105,7 @@ class RoutineViewModelTest {
 
         vm.effects.test {
             vm.onIntent(RoutineIntent.NextClicked)
-            assertThat(awaitItem()).isEqualTo(RoutineEffect.Close)
+            assertThat(awaitItem()).isEqualTo(RoutineEffect.Saved)
         }
         assertThat(routines.current.isConfigured).isTrue()
         assertThat(routines.current.briefTime).isEqualTo(LocalTime.of(20, 0))

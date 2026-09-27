@@ -5,6 +5,9 @@ plugins {
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:ui"))
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
     ksp(libs.androidx.hilt.compiler)

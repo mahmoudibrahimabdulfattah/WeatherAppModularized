@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="brief_channel_name">Daily preparation</string>
+    <string name="brief_channel_description">Your nightly brief on what to wear and carry tomorrow</string>
+    <string name="brief_update_title">Update · %1$s</string>
+    <string name="brief_action_view">View brief</string>
+    <string name="brief_action_plans">Plans changed?</string>
+</resources>

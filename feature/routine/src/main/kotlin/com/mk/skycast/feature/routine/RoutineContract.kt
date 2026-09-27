@@ -59,4 +59,7 @@ sealed interface RoutineIntent : UiIntent {
 
 sealed interface RoutineEffect : UiEffect {
     data object Close : RoutineEffect
+
+    /** Routine saved: ask for notification permission (in context), then close. */
+    data object Saved : RoutineEffect
 }
