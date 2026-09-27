@@ -10,6 +10,7 @@ import com.mk.skycast.core.model.WindSpeedUnit
 import java.text.NumberFormat
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -86,6 +87,12 @@ class WeatherFormatter(
     fun time(instant: Instant, zone: ZoneId): String =
         DateTimeFormatter.ofPattern(if (use24Hour()) "HH:mm" else "h:mm a", locale)
             .format(instant.atZone(zone))
+
+    /** A zone-less clock time (e.g. a routine's departure), honoring the 12/24h preference. */
+    fun time(time: LocalTime): String =
+        DateTimeFormatter.ofPattern(if (use24Hour()) "HH:mm" else "h:mm a", locale).format(time)
+
+    fun uses24HourClock(): Boolean = use24Hour()
 
     /** Short hour label for hourly strips: "14" / "2 PM". */
     fun hour(instant: Instant, zone: ZoneId): String =

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="routine_title">Set up your routine</string>
+    <string name="routine_title_edit">My routine</string>
+    <string name="routine_back">Back</string>
+    <string name="routine_skip">Skip</string>
+    <string name="routine_next">Next</string>
+    <string name="routine_save">Save routine</string>
+    <string name="routine_step_of">Step %1$d of %2$d</string>
+    <string name="routine_ok">OK</string>
+    <string name="routine_cancel">Cancel</string>
+    <string name="routine_list_separator">, </string>
+
+    <string name="routine_week_intro">Tell Skycast how your week usually goes, so every brief is about the hours you\'re actually outside.</string>
+    <string name="routine_week">Your week</string>
+    <string name="routine_day_away">Work/study</string>
+    <string name="routine_day_home">Home</string>
+    <string name="routine_day_off">Day off</string>
+
+    <string name="routine_trip_intro">Your usual trip to work or study.</string>
+    <string name="routine_trip">Your usual trip</string>
+    <string name="routine_leave_home">Leave home</string>
+    <string name="routine_leave_work">Leave work</string>
+    <string name="routine_next_day">Return next day</string>
+    <string name="routine_next_day_hint">For night shifts that end after midnight</string>
+    <string name="routine_travel_time">Travel time</string>
+    <string name="routine_minutes">%1$s min</string>
+    <string name="routine_transport">Transport</string>
+    <string name="routine_transport_required">Choose how you usually travel.</string>
+    <string name="routine_mode_car">Car</string>
+    <string name="routine_mode_public">Transit</string>
+    <string name="routine_mode_walk">Walk</string>
+    <string name="routine_mode_bicycle">Bicycle</string>
+    <string name="routine_mode_motorbike">Motorbike</string>
+
+    <string name="routine_outings_intro_no_trip">No work days away from home. Add the times you usually go out, like the gym or an evening walk.</string>
+    <string name="routine_outings">Regular outings</string>
+    <string name="routine_outings_empty">Going out regularly, even on home days? Add it here.</string>
+    <string name="routine_add_outing">Add regular outing</string>
+    <string name="routine_edit_outing">Edit outing</string>
+    <string name="routine_outing_summary">%1$s · %2$s–%3$s · %4$s</string>
+    <string name="routine_kind_gym">Gym</string>
+    <string name="routine_kind_outing">Outing</string>
+    <string name="routine_kind_family">Family visit</string>
+    <string name="routine_kind_prayer">Prayer</string>
+    <string name="routine_kind_custom">Other</string>
+    <string name="routine_custom_label">Name</string>
+    <string name="routine_outing_days">Days</string>
+    <string name="routine_outing_depart">Leave</string>
+    <string name="routine_outing_return">Return</string>
+    <string name="routine_outing_setting">Mostly</string>
+    <string name="routine_setting_indoors">Indoors</string>
+    <string name="routine_setting_outdoors">Outdoors</string>
+    <string name="routine_delete">Delete</string>
+    <string name="routine_save_outing">Save outing</string>
+
+    <string name="routine_brief_intro">Each evening Skycast prepares you for tomorrow: what to wear, what to carry and when the weather turns.</string>
+    <string name="routine_brief">Nightly brief</string>
+    <string name="routine_brief_time">Brief time</string>
+    <string name="routine_morning_refresh">Update me in the morning</string>
+    <string name="routine_morning_refresh_hint">Only if the forecast changes what you should carry</string>
+</resources>

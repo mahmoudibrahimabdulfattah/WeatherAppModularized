@@ -35,6 +35,8 @@ class SettingsViewModel @Inject constructor(
 
             SettingsIntent.OpenDataSourceClicked -> emitEffect(SettingsEffect.OpenUrl(DATA_SOURCE_URL))
 
+            SettingsIntent.OpenRoutineClicked -> emitEffect(SettingsEffect.OpenRoutine)
+
             SettingsIntent.BackClicked -> emitEffect(SettingsEffect.NavigateBack)
         }
     }

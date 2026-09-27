@@ -3,6 +3,9 @@
     <string name="settings_title">Settings</string>
     <string name="settings_back">Back</string>
     <string name="settings_intro">Make the forecast feel like you.</string>
+    <string name="settings_routine">Daily brief</string>
+    <string name="settings_routine_title">My routine</string>
+    <string name="settings_routine_hint">Your week, usual trip, outings and nightly brief</string>
     <string name="settings_units">Units</string>
     <string name="settings_temperature">Temperature</string>
     <string name="settings_wind">Wind speed</string>

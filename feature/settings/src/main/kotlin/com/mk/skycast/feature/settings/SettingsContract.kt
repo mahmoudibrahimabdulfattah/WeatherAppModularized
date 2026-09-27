@@ -17,10 +17,12 @@ sealed interface SettingsIntent : UiIntent {
     /** Every setting change goes through one intent; applied instantly app-wide. */
     data class Update(val update: PreferenceUpdate) : SettingsIntent
     data object OpenDataSourceClicked : SettingsIntent
+    data object OpenRoutineClicked : SettingsIntent
     data object BackClicked : SettingsIntent
 }
 
 sealed interface SettingsEffect : UiEffect {
     data object NavigateBack : SettingsEffect
+    data object OpenRoutine : SettingsEffect
     data class OpenUrl(val url: String) : SettingsEffect
 }
