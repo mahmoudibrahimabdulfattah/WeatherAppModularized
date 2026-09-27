@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_ui_error_no_internet">No internet connection</string>
+    <string name="core_ui_error_timeout">The request took too long. Try again.</string>
+    <string name="core_ui_error_server">Weather service is unavailable right now</string>
+    <string name="core_ui_error_not_found">Not found</string>
+    <string name="core_ui_error_unexpected">Something went wrong</string>
+    <string name="core_ui_error_location_permission">Location permission is required</string>
+    <string name="core_ui_error_location_disabled">Turn on location services</string>
+    <string name="core_ui_error_location_unavailable">Could not determine your location</string>
+
+    <string name="core_ui_clear">Clear sky</string>
+    <string name="core_ui_mainly_clear">Mostly clear</string>
+    <string name="core_ui_partly_cloudy">Partly cloudy</string>
+    <string name="core_ui_overcast">Overcast</string>
+    <string name="core_ui_fog">Fog</string>
+    <string name="core_ui_drizzle">Drizzle</string>
+    <string name="core_ui_freezing_drizzle">Freezing drizzle</string>
+    <string name="core_ui_rain">Rain</string>
+    <string name="core_ui_freezing_rain">Freezing rain</string>
+    <string name="core_ui_snow">Snow</string>
+    <string name="core_ui_snow_grains">Snow grains</string>
+    <string name="core_ui_rain_showers">Rain showers</string>
+    <string name="core_ui_snow_showers">Snow showers</string>
+    <string name="core_ui_thunderstorm">Thunderstorm</string>
+    <string name="core_ui_thunderstorm_hail">Thunderstorm with hail</string>
+    <string name="core_ui_unknown">Conditions unavailable</string>
+    <string name="core_ui_unavailable">—</string>
+    <string name="core_ui_aqi_good">Good</string>
+    <string name="core_ui_aqi_moderate">Moderate</string>
+    <string name="core_ui_aqi_sensitive">Unhealthy for sensitive groups</string>
+    <string name="core_ui_aqi_unhealthy">Unhealthy</string>
+    <string name="core_ui_aqi_very_unhealthy">Very unhealthy</string>
+    <string name="core_ui_aqi_hazardous">Hazardous</string>
+    <string name="core_ui_uv_low">Low</string>
+    <string name="core_ui_uv_moderate">Moderate</string>
+    <string name="core_ui_uv_high">High</string>
+    <string name="core_ui_uv_very_high">Very high</string>
+    <string name="core_ui_uv_extreme">Extreme</string>
+</resources>

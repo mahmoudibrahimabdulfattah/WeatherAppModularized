@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="places_title">Your places</string>
+    <string name="places_back">Back</string>
+    <string name="places_search">Search city or region</string>
+    <string name="places_clear">Clear search</string>
+    <string name="places_edit">Edit</string>
+    <string name="places_done">Done</string>
+    <string name="places_use_location">Use current location</string>
+    <string name="places_location_hint">The forecast follows you</string>
+    <string name="places_locating">Finding your location…</string>
+    <string name="places_saved">Saved places</string>
+    <string name="places_empty">A world of weather awaits</string>
+    <string name="places_empty_body">Search for a city above to keep its sky close.</string>
+    <string name="places_no_results">No places found</string>
+    <string name="places_no_results_body">Try a different city name or nearby region.</string>
+    <string name="places_searching">Searching places…</string>
+    <string name="places_short_query">Enter at least two characters to search.</string>
+    <string name="places_remove">Remove %1$s</string>
+    <string name="places_move_up">Move %1$s up</string>
+    <string name="places_move_down">Move %1$s down</string>
+    <string name="places_selected">Selected</string>
+    <string name="places_device">Current location</string>
+    <string name="places_high_low">H: %1$s   L: %2$s</string>
+    <string name="places_loading">Forecast on its way</string>
+    <string name="places_add">Add %1$s</string>
+    <string name="places_edit_hint">Use the arrows to reorder. Swipe a place to remove it.</string>
+</resources>

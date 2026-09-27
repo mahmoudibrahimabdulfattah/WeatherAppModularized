@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_intro">Make the forecast feel like you.</string>
+    <string name="settings_units">Units</string>
+    <string name="settings_temperature">Temperature</string>
+    <string name="settings_wind">Wind speed</string>
+    <string name="settings_precipitation">Precipitation</string>
+    <string name="settings_pressure">Pressure</string>
+    <string name="settings_time">Time format</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_system">System</string>
+    <string name="settings_light">Light</string>
+    <string name="settings_dark">Dark</string>
+    <string name="settings_dynamic">Dynamic color</string>
+    <string name="settings_dynamic_hint">Use colors from your wallpaper</string>
+    <string name="settings_about">About Skycast</string>
+    <string name="settings_version">Version %1$s</string>
+    <string name="settings_source">Weather data by Open-Meteo.com (CC BY 4.0)</string>
+    <string name="settings_promise">Free. No ads. No tracking.</string>
+    <string name="settings_celsius">°C</string>
+    <string name="settings_fahrenheit">°F</string>
+    <string name="settings_kmh">km/h</string>
+    <string name="settings_mph">mph</string>
+    <string name="settings_ms">m/s</string>
+    <string name="settings_kn">kn</string>
+    <string name="settings_mm">mm</string>
+    <string name="settings_in">in</string>
+    <string name="settings_hpa">hPa</string>
+    <string name="settings_inhg">inHg</string>
+    <string name="settings_12h">12h</string>
+    <string name="settings_24h">24h</string>
+    <string name="settings_loading">Loading preferences…</string>
+    <string name="settings_version_unknown">Unknown</string>
+    <string name="settings_language">Language</string>
+    <!-- Language names are always shown in their own language. -->
+    <string name="settings_language_english" translatable="false">English</string>
+    <string name="settings_language_arabic" translatable="false">العربية</string>
+</resources>

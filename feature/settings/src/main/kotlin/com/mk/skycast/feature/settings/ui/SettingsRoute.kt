@@ -1,0 +1,25 @@
+package com.mk.skycast.feature.settings.ui
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mk.skycast.core.mvi.CollectEffects
+import com.mk.skycast.feature.settings.SettingsEffect
+import com.mk.skycast.feature.settings.SettingsViewModel
+
+@Composable
+fun SettingsRoute(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val uriHandler = LocalUriHandler.current
+
+    CollectEffects(viewModel.effects) { effect ->
+        when (effect) {
+            SettingsEffect.NavigateBack -> onBack()
+            is SettingsEffect.OpenUrl -> runCatching { uriHandler.openUri(effect.url) }
+        }
+    }
+
+    SettingsScreen(state = state, onIntent = viewModel::onIntent)
+}
