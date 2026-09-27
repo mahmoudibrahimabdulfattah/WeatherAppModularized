@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="routine_title">إعداد روتينك</string>
+    <string name="routine_title_edit">روتيني</string>
+    <string name="routine_back">رجوع</string>
+    <string name="routine_skip">تخطٍّ</string>
+    <string name="routine_next">التالي</string>
+    <string name="routine_save">حفظ الروتين</string>
+    <string name="routine_step_of">الخطوة %1$d من %2$d</string>
+    <string name="routine_ok">موافق</string>
+    <string name="routine_cancel">إلغاء</string>
+    <string name="routine_list_separator">، </string>
+
+    <string name="routine_week_intro">أخبر Skycast كيف يمضي أسبوعك عادةً، ليكون كل ملخص عن الساعات التي تقضيها خارج المنزل فعلًا.</string>
+    <string name="routine_week">أسبوعك</string>
+    <string name="routine_day_away">عمل/دراسة</string>
+    <string name="routine_day_home">المنزل</string>
+    <string name="routine_day_off">إجازة</string>
+
+    <string name="routine_trip_intro">رحلتك المعتادة إلى العمل أو الدراسة.</string>
+    <string name="routine_trip">رحلتك المعتادة</string>
+    <string name="routine_leave_home">الخروج من المنزل</string>
+    <string name="routine_leave_work">الخروج من العمل</string>
+    <string name="routine_next_day">العودة في اليوم التالي</string>
+    <string name="routine_next_day_hint">للمناوبات الليلية التي تنتهي بعد منتصف الليل</string>
+    <string name="routine_travel_time">مدة الطريق</string>
+    <string name="routine_minutes">%1$s د</string>
+    <string name="routine_transport">وسيلة التنقل</string>
+    <string name="routine_transport_required">اختر وسيلة تنقلك المعتادة.</string>
+    <string name="routine_mode_car">سيارة</string>
+    <string name="routine_mode_public">مواصلات</string>
+    <string name="routine_mode_walk">مشيًا</string>
+    <string name="routine_mode_bicycle">دراجة</string>
+    <string name="routine_mode_motorbike">دراجة نارية</string>
+
+    <string name="routine_outings_intro_no_trip">لا توجد أيام عمل خارج المنزل. أضف الأوقات التي تخرج فيها عادةً، مثل النادي أو نزهة المساء.</string>
+    <string name="routine_outings">الخروجات المنتظمة</string>
+    <string name="routine_outings_empty">تخرج بانتظام حتى في أيام المنزل؟ أضفها هنا.</string>
+    <string name="routine_add_outing">إضافة خروجة منتظمة</string>
+    <string name="routine_edit_outing">تعديل الخروجة</string>
+    <string name="routine_outing_summary">%1$s · %2$s–%3$s · %4$s</string>
+    <string name="routine_kind_gym">النادي</string>
+    <string name="routine_kind_outing">نزهة</string>
+    <string name="routine_kind_family">زيارة عائلية</string>
+    <string name="routine_kind_prayer">الصلاة</string>
+    <string name="routine_kind_custom">أخرى</string>
+    <string name="routine_custom_label">الاسم</string>
+    <string name="routine_outing_days">الأيام</string>
+    <string name="routine_outing_depart">الخروج</string>
+    <string name="routine_outing_return">العودة</string>
+    <string name="routine_outing_setting">غالبًا</string>
+    <string name="routine_setting_indoors">داخل مكان مغلق</string>
+    <string name="routine_setting_outdoors">في الخارج</string>
+    <string name="routine_delete">حذف</string>
+    <string name="routine_save_outing">حفظ الخروجة</string>
+
+    <string name="routine_brief_intro">كل مساء يجهّزك Skycast للغد: ماذا تلبس، وماذا تحمل، ومتى يتغير الطقس.</string>
+    <string name="routine_brief">الملخص الليلي</string>
+    <string name="routine_brief_time">وقت الملخص</string>
+    <string name="routine_morning_refresh">حدّثني في الصباح</string>
+    <string name="routine_morning_refresh_hint">فقط إذا غيّرت التوقعات ما يجب أن تحمله</string>
+</resources>

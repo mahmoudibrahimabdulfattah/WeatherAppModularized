@@ -1,14 +1,17 @@
 package com.mk.skycast.feature.settings.ui
 
 import android.os.Build
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -18,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,9 +39,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.mk.skycast.core.designsystem.components.SkySwitchRow
 import com.mk.skycast.core.designsystem.theme.SkySpace
 import com.mk.skycast.core.domain.usecase.PreferenceUpdate
 import com.mk.skycast.core.model.AppLanguage
@@ -83,6 +89,7 @@ fun SettingsScreen(state: SettingsState, onIntent: (SettingsIntent) -> Unit, mod
                 state = state,
                 onUpdate = { onIntent(SettingsIntent.Update(it)) },
                 onOpenDataSource = { onIntent(SettingsIntent.OpenDataSourceClicked) },
+                onOpenRoutine = { onIntent(SettingsIntent.OpenRoutineClicked) },
                 modifier = Modifier.padding(padding),
             )
         }
@@ -94,6 +101,7 @@ private fun SettingsContent(
     state: SettingsState,
     onUpdate: (PreferenceUpdate) -> Unit,
     onOpenDataSource: () -> Unit,
+    onOpenRoutine: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val preferences = state.preferences
@@ -109,6 +117,10 @@ private fun SettingsContent(
             verticalArrangement = Arrangement.spacedBy(SkySpace.large),
         ) {
             Text(stringResource(R.string.settings_intro), color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+            SettingsGroup(R.string.settings_routine) {
+                RoutineEntry(onOpenRoutine)
+            }
 
             SettingsGroup(R.string.settings_units) {
                 ChoiceRow(
@@ -168,7 +180,7 @@ private fun SettingsContent(
                 )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    SwitchRow(
+                    SkySwitchRow(
                         title = stringResource(R.string.settings_dynamic),
                         description = stringResource(R.string.settings_dynamic_hint),
                         checked = preferences.useDynamicColor,
@@ -182,6 +194,28 @@ private fun SettingsContent(
             }
             Spacer(Modifier.height(SkySpace.medium))
         }
+    }
+}
+
+@Composable
+private fun RoutineEntry(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = SkySpace.touch)
+            .clickable(role = Role.Button, onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(SkySpace.medium),
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(R.string.settings_routine_title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.settings_routine_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null)
     }
 }
 

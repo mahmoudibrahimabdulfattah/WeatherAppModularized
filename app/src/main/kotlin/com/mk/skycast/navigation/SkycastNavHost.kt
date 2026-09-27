@@ -7,6 +7,8 @@ import com.mk.skycast.feature.home.navigation.HomeDestination
 import com.mk.skycast.feature.home.navigation.homeScreen
 import com.mk.skycast.feature.places.navigation.PlacesDestination
 import com.mk.skycast.feature.places.navigation.placesScreen
+import com.mk.skycast.feature.routine.navigation.RoutineDestination
+import com.mk.skycast.feature.routine.navigation.routineScreen
 import com.mk.skycast.feature.settings.navigation.SettingsDestination
 import com.mk.skycast.feature.settings.navigation.settingsScreen
 
@@ -20,6 +22,10 @@ fun SkycastNavHost() {
             onOpenSettings = { navController.navigate(SettingsDestination) { launchSingleTop = true } },
         )
         placesScreen(onBack = { navController.popBackStack() })
-        settingsScreen(onBack = { navController.popBackStack() })
+        settingsScreen(
+            onBack = { navController.popBackStack() },
+            onOpenRoutine = { navController.navigate(RoutineDestination) { launchSingleTop = true } },
+        )
+        routineScreen(onClose = { navController.popBackStack() })
     }
 }

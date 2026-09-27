@@ -10,14 +10,17 @@ import com.mk.skycast.core.domain.repository.DeviceLocationProvider
 import com.mk.skycast.core.domain.repository.LocationRepository
 import com.mk.skycast.core.domain.repository.NetworkMonitor
 import com.mk.skycast.core.domain.repository.PlaceSearchRepository
+import com.mk.skycast.core.domain.repository.RoutineRepository
 import com.mk.skycast.core.domain.repository.UserPreferencesRepository
 import com.mk.skycast.core.domain.repository.WeatherRepository
 import com.mk.skycast.core.domain.repository.WeatherSyncScheduler
 import com.mk.skycast.core.model.AppLanguage
+import com.mk.skycast.core.model.DayPlanOverride
 import com.mk.skycast.core.model.DeviceLocation
 import com.mk.skycast.core.model.PlaceSuggestion
 import com.mk.skycast.core.model.PrecipitationUnit
 import com.mk.skycast.core.model.PressureUnit
+import com.mk.skycast.core.model.Routine
 import com.mk.skycast.core.model.SavedLocation
 import com.mk.skycast.core.model.TemperatureUnit
 import com.mk.skycast.core.model.ThemeMode
@@ -25,6 +28,7 @@ import com.mk.skycast.core.model.TimeFormat
 import com.mk.skycast.core.model.UserPreferences
 import com.mk.skycast.core.model.Weather
 import com.mk.skycast.core.model.WindSpeedUnit
+import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -172,5 +176,26 @@ class FakeAppLanguageRepository(var language: AppLanguage = AppLanguage.SYSTEM) 
     override fun current(): AppLanguage = language
     override fun set(language: AppLanguage) {
         this.language = language
+    }
+}
+
+class FakeRoutineRepository(initial: Routine = Routine()) : RoutineRepository {
+    private val routineState = MutableStateFlow(initial)
+    private val overridesState = MutableStateFlow<List<DayPlanOverride>>(emptyList())
+    override val routine: Flow<Routine> = routineState
+    override val overrides: Flow<List<DayPlanOverride>> = overridesState
+    val current: Routine get() = routineState.value
+    val currentOverrides: List<DayPlanOverride> get() = overridesState.value
+
+    override suspend fun save(routine: Routine) = routineState.update { routine }
+
+    override suspend fun setOverride(override: DayPlanOverride) =
+        overridesState.update { list -> list.filterNot { it.date == override.date } + override }
+
+    override suspend fun clearOverride(date: LocalDate) = overridesState.update { list ->
+        list.filterNot {
+            it.date ==
+                date
+        }
     }
 }

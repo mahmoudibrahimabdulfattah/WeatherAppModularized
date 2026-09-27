@@ -10,13 +10,14 @@ import com.mk.skycast.feature.settings.SettingsEffect
 import com.mk.skycast.feature.settings.SettingsViewModel
 
 @Composable
-fun SettingsRoute(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsRoute(onBack: () -> Unit, onOpenRoutine: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
 
     CollectEffects(viewModel.effects) { effect ->
         when (effect) {
             SettingsEffect.NavigateBack -> onBack()
+            SettingsEffect.OpenRoutine -> onOpenRoutine()
             is SettingsEffect.OpenUrl -> runCatching { uriHandler.openUri(effect.url) }
         }
     }
