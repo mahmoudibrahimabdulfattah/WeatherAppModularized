@@ -44,6 +44,7 @@ include(":core:data")
 include(":core:mvi")
 include(":core:designsystem")
 include(":core:ui")
+include(":core:ai")
 
 // Background sync
 include(":sync:work")

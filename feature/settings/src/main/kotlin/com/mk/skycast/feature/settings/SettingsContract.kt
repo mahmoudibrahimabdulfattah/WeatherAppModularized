@@ -11,6 +11,9 @@ data class SettingsState(
     val isLoading: Boolean = true,
     val preferences: UserPreferences = UserPreferences(),
     val language: AppLanguage = AppLanguage.SYSTEM,
+    /** AI wording is only offered where the free Gemini tier may be used. */
+    val aiSupported: Boolean = false,
+    val aiEnabled: Boolean = false,
 ) : UiState
 
 sealed interface SettingsIntent : UiIntent {
@@ -18,6 +21,7 @@ sealed interface SettingsIntent : UiIntent {
     data class Update(val update: PreferenceUpdate) : SettingsIntent
     data object OpenDataSourceClicked : SettingsIntent
     data object OpenRoutineClicked : SettingsIntent
+    data class AiWordingToggled(val enabled: Boolean) : SettingsIntent
     data object BackClicked : SettingsIntent
 }
 

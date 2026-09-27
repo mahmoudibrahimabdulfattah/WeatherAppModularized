@@ -80,4 +80,13 @@
     <string name="home_ask_title">Ask Skycast</string>
     <string name="home_ask_context">%1$s · %2$s</string>
     <string name="home_ask_why">Why this answer?</string>
+    <string name="home_ai_preparing">Preparing explanation…</string>
+    <string name="home_ai_label">AI-written wording · based on the facts above</string>
+    <string name="home_ai_limit">AI wording limit reached today. Forecast answers remain available.</string>
+    <string name="home_ai_unavailable">AI wording temporarily unavailable.</string>
+    <string name="home_ai_consent_title">Friendlier answers with AI?</string>
+    <string name="home_ai_consent_body">Skycast can ask Google Gemini to reword these answers. Only the weather facts shown here are sent — never your location, routine or identity. Google may process and review this text to improve its services. The facts and advice always come from the forecast itself.</string>
+    <string name="home_ai_consent_adult">I\'m 18 or older</string>
+    <string name="home_ai_consent_accept">Use AI wording</string>
+    <string name="home_ai_consent_decline">Continue without AI</string>
 </resources>

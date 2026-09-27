@@ -1,5 +1,7 @@
 package com.mk.skycast.feature.home
 
+import com.mk.skycast.core.domain.ai.AiWording
+import com.mk.skycast.core.domain.ai.RephraseRequest
 import com.mk.skycast.core.domain.ask.AskAnswer
 import com.mk.skycast.core.domain.ask.AskQuestion
 import com.mk.skycast.core.domain.ask.ExerciseKind
@@ -60,6 +62,8 @@ data class AskSheetState(
     val question: AskQuestion? = null,
     val exercise: ExerciseKind = ExerciseKind.WALK,
     val answer: AskAnswer? = null,
+    /** Optional AI wording for [answer]; null until requested. */
+    val aiWording: AiWording? = null,
 )
 
 /** One-day change of plans, edited as a draft until saved. */
@@ -108,6 +112,10 @@ sealed interface HomeIntent : UiIntent {
     data class AskQuestionSelected(val question: AskQuestion) : HomeIntent
     data class AskExerciseSelected(val exercise: ExerciseKind) : HomeIntent
     data object AskDismissed : HomeIntent
+
+    /** The sheet rendered an answer; ask for friendlier wording of exactly these facts. */
+    data class AskWordingRequested(val request: RephraseRequest) : HomeIntent
+    data class AskAiConsentGiven(val granted: Boolean) : HomeIntent
 
     /** From the notification: open the sheet as soon as the routine is loaded. */
     data object OpenPlansRequested : HomeIntent

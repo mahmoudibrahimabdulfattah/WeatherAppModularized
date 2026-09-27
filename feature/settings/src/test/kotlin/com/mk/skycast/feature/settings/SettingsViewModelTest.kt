@@ -2,6 +2,9 @@ package com.mk.skycast.feature.settings
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.mk.skycast.core.domain.ai.AiConsent
+import com.mk.skycast.core.domain.ai.ObserveAiAvailabilityUseCase
+import com.mk.skycast.core.domain.ai.SetAiConsentUseCase
 import com.mk.skycast.core.domain.usecase.GetAppLanguageUseCase
 import com.mk.skycast.core.domain.usecase.ObserveUserPreferencesUseCase
 import com.mk.skycast.core.domain.usecase.PreferenceUpdate
@@ -9,6 +12,7 @@ import com.mk.skycast.core.domain.usecase.UpdateUserPreferenceUseCase
 import com.mk.skycast.core.model.AppLanguage
 import com.mk.skycast.core.model.TemperatureUnit
 import com.mk.skycast.core.model.ThemeMode
+import com.mk.skycast.core.testing.FakeAiSettingsRepository
 import com.mk.skycast.core.testing.FakeAppLanguageRepository
 import com.mk.skycast.core.testing.FakeUserPreferencesRepository
 import com.mk.skycast.core.testing.MainDispatcherRule
@@ -23,11 +27,14 @@ class SettingsViewModelTest {
 
     private val preferences = FakeUserPreferencesRepository()
     private val language = FakeAppLanguageRepository()
+    private val aiSettings = FakeAiSettingsRepository(AiConsent.GRANTED)
     private val vm by lazy {
         SettingsViewModel(
             ObserveUserPreferencesUseCase(preferences),
             GetAppLanguageUseCase(language),
             UpdateUserPreferenceUseCase(preferences, language),
+            ObserveAiAvailabilityUseCase(aiSettings) { true },
+            SetAiConsentUseCase(aiSettings),
         )
     }
 
@@ -55,5 +62,16 @@ class SettingsViewModelTest {
             vm.onIntent(SettingsIntent.OpenDataSourceClicked)
             assertThat(awaitItem()).isEqualTo(SettingsEffect.OpenUrl(SettingsViewModel.DATA_SOURCE_URL))
         }
+    }
+
+    @Test
+    fun `turning AI wording off declines, turning it on asks again`() = runTest {
+        assertThat(vm.state.value.aiEnabled).isTrue()
+
+        vm.onIntent(SettingsIntent.AiWordingToggled(false))
+        assertThat(vm.state.value.aiEnabled).isFalse()
+
+        vm.onIntent(SettingsIntent.AiWordingToggled(true))
+        aiSettings.consent.test { assertThat(awaitItem()).isEqualTo(AiConsent.UNKNOWN) }
     }
 }

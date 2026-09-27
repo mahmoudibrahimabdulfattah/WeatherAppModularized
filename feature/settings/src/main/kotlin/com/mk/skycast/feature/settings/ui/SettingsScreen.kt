@@ -90,6 +90,7 @@ fun SettingsScreen(state: SettingsState, onIntent: (SettingsIntent) -> Unit, mod
                 onUpdate = { onIntent(SettingsIntent.Update(it)) },
                 onOpenDataSource = { onIntent(SettingsIntent.OpenDataSourceClicked) },
                 onOpenRoutine = { onIntent(SettingsIntent.OpenRoutineClicked) },
+                onToggleAi = { onIntent(SettingsIntent.AiWordingToggled(it)) },
                 modifier = Modifier.padding(padding),
             )
         }
@@ -102,6 +103,7 @@ private fun SettingsContent(
     onUpdate: (PreferenceUpdate) -> Unit,
     onOpenDataSource: () -> Unit,
     onOpenRoutine: () -> Unit,
+    onToggleAi: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val preferences = state.preferences
@@ -120,6 +122,17 @@ private fun SettingsContent(
 
             SettingsGroup(R.string.settings_routine) {
                 RoutineEntry(onOpenRoutine)
+            }
+
+            if (state.aiSupported) {
+                SettingsGroup(R.string.settings_ai) {
+                    SkySwitchRow(
+                        title = stringResource(R.string.settings_ai_wording),
+                        description = stringResource(R.string.settings_ai_wording_hint),
+                        checked = state.aiEnabled,
+                        onCheckedChange = onToggleAi,
+                    )
+                }
             }
 
             SettingsGroup(R.string.settings_units) {

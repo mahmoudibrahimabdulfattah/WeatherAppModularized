@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.skycast.android.application.compose)
     alias(libs.plugins.skycast.hilt)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -45,6 +46,11 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:ui"))
     implementation(project(":sync:work"))
+    implementation(project(":core:ai"))
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.appcheck.playintegrity)
+    debugImplementation(libs.firebase.appcheck.debug)
 
     implementation(project(":feature:home"))
     implementation(project(":feature:places"))
