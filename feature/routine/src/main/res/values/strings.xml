@@ -7,8 +7,6 @@
     <string name="routine_next">Next</string>
     <string name="routine_save">Save routine</string>
     <string name="routine_step_of">Step %1$d of %2$d</string>
-    <string name="routine_ok">OK</string>
-    <string name="routine_cancel">Cancel</string>
     <string name="routine_list_separator">, </string>
 
     <string name="routine_week_intro">Tell Skycast how your week usually goes, so every brief is about the hours you\'re actually outside.</string>

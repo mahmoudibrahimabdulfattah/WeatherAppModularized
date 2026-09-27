@@ -45,6 +45,7 @@ import com.mk.skycast.core.designsystem.components.rememberReducedMotion
 import com.mk.skycast.core.designsystem.theme.SkyColors
 import com.mk.skycast.core.designsystem.theme.SkySpace
 import com.mk.skycast.core.model.WeatherCondition
+import com.mk.skycast.core.ui.brief.rememberBriefText
 import com.mk.skycast.core.ui.format.WeatherFormatter
 import com.mk.skycast.core.ui.text.UiText
 import com.mk.skycast.core.ui.weather.WeatherIcon
@@ -96,8 +97,15 @@ internal fun LocationPager(
                 val page = state.pages[index]
                 val error = state.pageErrors[page.location.id]
                 when {
-                    page.weather != null -> WeatherPageContent(page, state.now, formatter)
+                    page.weather != null -> WeatherPageContent(
+                        page = page,
+                        now = state.now,
+                        formatter = formatter,
+                        brief = briefSlot(state, page, formatter, onIntent),
+                    )
+
                     error != null -> PageError(error, onRetry = { onIntent(HomeIntent.Refresh) })
+
                     else -> WeatherSkeleton(Modifier.fillMaxSize())
                 }
             }
@@ -190,5 +198,38 @@ private fun PageError(error: UiText, onRetry: () -> Unit, modifier: Modifier = M
         Button(onClick = onRetry, modifier = Modifier.padding(top = SkySpace.large)) {
             Text(stringResource(R.string.home_retry))
         }
+    }
+}
+
+/** The brief (or the routine prompt) lives on the page of the routine's location only. */
+private fun briefSlot(
+    state: HomeState,
+    page: WeatherPage,
+    formatter: WeatherFormatter,
+    onIntent: (HomeIntent) -> Unit,
+): (@Composable () -> Unit)? {
+    if (page.location.id != state.briefLocationId) return null
+    val brief = state.brief
+    return when {
+        state.showRoutinePrompt -> {
+            { RoutinePromptCard(onSetUp = { onIntent(HomeIntent.OpenRoutineClicked) }) }
+        }
+
+        brief != null && page.weather != null -> {
+            {
+                BriefCard(
+                    brief = brief,
+                    text = rememberBriefText(formatter, page.weather.zoneId),
+                    now = state.now,
+                    expanded = state.isBriefExpanded,
+                    hasPlanChange = state.overrides.any { it.date == brief.date },
+                    onToggleExpand = { onIntent(HomeIntent.BriefExpandToggled) },
+                    onChangePlans = { onIntent(HomeIntent.PlansChangedClicked) },
+                    onEditRoutine = { onIntent(HomeIntent.OpenRoutineClicked) },
+                )
+            }
+        }
+
+        else -> null
     }
 }

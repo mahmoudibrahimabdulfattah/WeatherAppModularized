@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="core_ui_ok">OK</string>
+    <string name="core_ui_cancel">Cancel</string>
     <string name="core_ui_error_no_internet">No internet connection</string>
     <string name="core_ui_error_timeout">The request took too long. Try again.</string>
     <string name="core_ui_error_server">Weather service is unavailable right now</string>
@@ -37,4 +39,87 @@
     <string name="core_ui_uv_high">High</string>
     <string name="core_ui_uv_very_high">Very high</string>
     <string name="core_ui_uv_extreme">Extreme</string>
+
+    <!-- Daily brief -->
+    <string name="brief_today">Today</string>
+    <string name="brief_tomorrow">Tomorrow</string>
+    <string name="brief_title">%1$s · %2$s</string>
+    <string name="brief_headline">%1$s: %2$s</string>
+    <string name="brief_joined">%1$s · %2$s</string>
+    <string name="brief_range">%1$s–%2$s</string>
+    <string name="brief_day_away">Work/study day</string>
+    <string name="brief_day_home">Home day</string>
+    <string name="brief_day_off">Day off</string>
+    <plurals name="brief_outings">
+        <item quantity="one">%1$s outing</item>
+        <item quantity="other">%1$s outings</item>
+    </plurals>
+
+    <string name="brief_action_umbrella">take an umbrella</string>
+    <string name="brief_action_raincoat">take a raincoat</string>
+    <string name="brief_action_extra_layer">take a layer for later</string>
+    <string name="brief_action_sunscreen">wear sunscreen</string>
+    <string name="brief_action_water">carry water</string>
+    <string name="brief_action_mask">take a mask</string>
+    <string name="brief_action_thunderstorm">storms on your route</string>
+    <string name="brief_action_heavy_rain">heavy rain on your route</string>
+    <string name="brief_action_fog">fog on the roads</string>
+    <string name="brief_action_strong_wind">strong gusts</string>
+    <string name="brief_action_dust">dusty air</string>
+    <string name="brief_action_extreme_heat">extreme heat</string>
+    <string name="brief_action_cold">very cold</string>
+    <string name="brief_action_warmer">%1$s warmer than today</string>
+    <string name="brief_action_colder">%1$s colder than today</string>
+    <string name="brief_action_windier">windier than today</string>
+    <string name="brief_action_rainier">rain is more likely than today</string>
+    <string name="brief_action_wear">wear %1$s</string>
+    <string name="brief_action_no_outing">no plans outside</string>
+
+    <string name="brief_wear_very_light">light, breathable clothes</string>
+    <string name="brief_wear_light">short sleeves</string>
+    <string name="brief_wear_light_layer">a light layer</string>
+    <string name="brief_wear_jacket">a jacket or sweater</string>
+    <string name="brief_wear_warm_coat">a warm coat</string>
+    <string name="brief_wear_heavy">a heavy coat, hat and gloves</string>
+    <string name="brief_wear_line">Wear %1$s — it feels like %2$s when you leave at %3$s.</string>
+    <string name="brief_wear_reason">It feels like %1$s when you leave at %2$s.</string>
+    <string name="brief_wear_swing">It warms up to %1$s later, so pick something you can take off.</string>
+
+    <string name="brief_when_out">on your way out</string>
+    <string name="brief_when_back">on your way back</string>
+    <string name="brief_when_outing">during your outing</string>
+
+    <string name="brief_item_umbrella">Umbrella</string>
+    <string name="brief_item_raincoat">Raincoat</string>
+    <string name="brief_item_extra_layer">Extra layer</string>
+    <string name="brief_item_sunscreen">Sunscreen</string>
+    <string name="brief_item_water">Water</string>
+    <string name="brief_item_mask">Mask</string>
+    <string name="brief_carry_umbrella">Umbrella: rain is likely %1$s, around %2$s.</string>
+    <string name="brief_carry_raincoat">Raincoat: rain is likely %1$s, around %2$s.</string>
+    <string name="brief_carry_extra_layer">Extra layer: it gets colder %1$s, around %2$s.</string>
+    <string name="brief_carry_sunscreen">Sunscreen: strong sun %1$s, around %2$s.</string>
+    <string name="brief_carry_water">Water: it\'s hot %1$s, around %2$s.</string>
+    <string name="brief_carry_mask">Mask: dusty or poor air %1$s, around %2$s.</string>
+
+    <string name="brief_hazard_thunderstorm">Thunderstorms %1$s, around %2$s.</string>
+    <string name="brief_hazard_heavy_rain">Heavy rain %1$s, around %2$s.</string>
+    <string name="brief_hazard_rain">Rain %1$s, around %2$s.</string>
+    <string name="brief_hazard_fog">Fog and low visibility %1$s, around %2$s — drive carefully.</string>
+    <string name="brief_hazard_strong_wind">Strong gusts %1$s, around %2$s.</string>
+    <string name="brief_hazard_dust">Dust in the air %1$s, around %2$s.</string>
+    <string name="brief_hazard_poor_air">Poor air quality %1$s, around %2$s.</string>
+    <string name="brief_hazard_extreme_heat">Extreme heat %1$s, around %2$s.</string>
+    <string name="brief_hazard_high_uv">Very high UV %1$s, around %2$s.</string>
+    <string name="brief_hazard_cold">Very cold %1$s, around %2$s.</string>
+
+    <string name="brief_day_temps">High %1$s · low %2$s</string>
+    <string name="brief_sunset">sunset %1$s</string>
+    <string name="brief_window_out">Leaving home</string>
+    <string name="brief_window_back">Heading back</string>
+    <string name="brief_window_detail">%1$s · feels %2$s</string>
+    <string name="brief_kind_gym">Gym</string>
+    <string name="brief_kind_outing">Outing</string>
+    <string name="brief_kind_family">Family visit</string>
+    <string name="brief_kind_prayer">Prayer</string>
 </resources>

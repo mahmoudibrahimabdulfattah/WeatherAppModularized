@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="core_ui_ok">موافق</string>
+    <string name="core_ui_cancel">إلغاء</string>
     <string name="core_ui_error_no_internet">لا يوجد اتصال بالإنترنت</string>
     <string name="core_ui_error_timeout">استغرق الطلب وقتًا طويلًا. حاول مرة أخرى.</string>
     <string name="core_ui_error_server">خدمة الطقس غير متاحة حاليًا</string>
@@ -37,4 +39,91 @@
     <string name="core_ui_uv_high">مرتفع</string>
     <string name="core_ui_uv_very_high">مرتفع جدًا</string>
     <string name="core_ui_uv_extreme">شديد جدًا</string>
+
+    <!-- الملخص اليومي -->
+    <string name="brief_today">اليوم</string>
+    <string name="brief_tomorrow">غدًا</string>
+    <string name="brief_title">%1$s · %2$s</string>
+    <string name="brief_headline">%1$s: %2$s</string>
+    <string name="brief_joined">%1$s · %2$s</string>
+    <string name="brief_range">%1$s–%2$s</string>
+    <string name="brief_day_away">يوم عمل/دراسة</string>
+    <string name="brief_day_home">يوم في المنزل</string>
+    <string name="brief_day_off">يوم إجازة</string>
+    <plurals name="brief_outings">
+        <item quantity="zero">لا خروجات</item>
+        <item quantity="one">خروجة واحدة</item>
+        <item quantity="two">خروجتان</item>
+        <item quantity="few">%1$s خروجات</item>
+        <item quantity="many">%1$s خروجة</item>
+        <item quantity="other">%1$s خروجة</item>
+    </plurals>
+
+    <string name="brief_action_umbrella">خذ مظلة</string>
+    <string name="brief_action_raincoat">خذ معطفًا واقيًا من المطر</string>
+    <string name="brief_action_extra_layer">خذ طبقة إضافية لوقت لاحق</string>
+    <string name="brief_action_sunscreen">استخدم واقي الشمس</string>
+    <string name="brief_action_water">احمل ماءً</string>
+    <string name="brief_action_mask">خذ كمامة</string>
+    <string name="brief_action_thunderstorm">عواصف رعدية في طريقك</string>
+    <string name="brief_action_heavy_rain">أمطار غزيرة في طريقك</string>
+    <string name="brief_action_fog">شبورة على الطرق</string>
+    <string name="brief_action_strong_wind">رياح قوية</string>
+    <string name="brief_action_dust">أجواء مُغبرة</string>
+    <string name="brief_action_extreme_heat">حرارة شديدة</string>
+    <string name="brief_action_cold">برد شديد</string>
+    <string name="brief_action_warmer">أدفأ من اليوم بـ %1$s</string>
+    <string name="brief_action_colder">أبرد من اليوم بـ %1$s</string>
+    <string name="brief_action_windier">رياح أقوى من اليوم</string>
+    <string name="brief_action_rainier">فرص المطر أعلى من اليوم</string>
+    <string name="brief_action_wear">ارتدِ %1$s</string>
+    <string name="brief_action_no_outing">لا خروج مخطط له</string>
+
+    <string name="brief_wear_very_light">ملابس خفيفة جيدة التهوية</string>
+    <string name="brief_wear_light">ملابس بأكمام قصيرة</string>
+    <string name="brief_wear_light_layer">طبقة خفيفة</string>
+    <string name="brief_wear_jacket">جاكيت أو سترة</string>
+    <string name="brief_wear_warm_coat">معطفًا دافئًا</string>
+    <string name="brief_wear_heavy">معطفًا ثقيلًا وقبعة وقفازات</string>
+    <string name="brief_wear_line">ارتدِ %1$s، فالجو يبدو %2$s عند خروجك الساعة %3$s.</string>
+    <string name="brief_wear_reason">يبدو الجو %1$s عند خروجك الساعة %2$s.</string>
+    <string name="brief_wear_swing">ترتفع الحرارة إلى %1$s لاحقًا، فاختر ما يمكنك خلعه.</string>
+
+    <string name="brief_when_out">في طريق ذهابك</string>
+    <string name="brief_when_back">في طريق عودتك</string>
+    <string name="brief_when_outing">أثناء خروجتك</string>
+
+    <string name="brief_item_umbrella">مظلة</string>
+    <string name="brief_item_raincoat">معطف مطر</string>
+    <string name="brief_item_extra_layer">طبقة إضافية</string>
+    <string name="brief_item_sunscreen">واقي شمس</string>
+    <string name="brief_item_water">ماء</string>
+    <string name="brief_item_mask">كمامة</string>
+    <string name="brief_carry_umbrella">مظلة: يُتوقع المطر %1$s، نحو %2$s.</string>
+    <string name="brief_carry_raincoat">معطف مطر: يُتوقع المطر %1$s، نحو %2$s.</string>
+    <string name="brief_carry_extra_layer">طبقة إضافية: يبرد الجو %1$s، نحو %2$s.</string>
+    <string name="brief_carry_sunscreen">واقي شمس: الشمس قوية %1$s، نحو %2$s.</string>
+    <string name="brief_carry_water">ماء: الجو حار %1$s، نحو %2$s.</string>
+    <string name="brief_carry_mask">كمامة: غبار أو هواء ملوث %1$s، نحو %2$s.</string>
+
+    <string name="brief_hazard_thunderstorm">عواصف رعدية %1$s، نحو %2$s.</string>
+    <string name="brief_hazard_heavy_rain">أمطار غزيرة %1$s، نحو %2$s.</string>
+    <string name="brief_hazard_rain">مطر %1$s، نحو %2$s.</string>
+    <string name="brief_hazard_fog">شبورة وضعف في الرؤية %1$s، نحو %2$s، فقُد بحذر.</string>
+    <string name="brief_hazard_strong_wind">رياح قوية %1$s، نحو %2$s.</string>
+    <string name="brief_hazard_dust">غبار في الجو %1$s، نحو %2$s.</string>
+    <string name="brief_hazard_poor_air">جودة هواء سيئة %1$s، نحو %2$s.</string>
+    <string name="brief_hazard_extreme_heat">حرارة شديدة %1$s، نحو %2$s.</string>
+    <string name="brief_hazard_high_uv">أشعة فوق بنفسجية مرتفعة جدًا %1$s، نحو %2$s.</string>
+    <string name="brief_hazard_cold">برد شديد %1$s، نحو %2$s.</string>
+
+    <string name="brief_day_temps">العظمى %1$s · الصغرى %2$s</string>
+    <string name="brief_sunset">الغروب %1$s</string>
+    <string name="brief_window_out">الخروج من المنزل</string>
+    <string name="brief_window_back">طريق العودة</string>
+    <string name="brief_window_detail">%1$s · المحسوسة %2$s</string>
+    <string name="brief_kind_gym">النادي</string>
+    <string name="brief_kind_outing">نزهة</string>
+    <string name="brief_kind_family">زيارة عائلية</string>
+    <string name="brief_kind_prayer">الصلاة</string>
 </resources>

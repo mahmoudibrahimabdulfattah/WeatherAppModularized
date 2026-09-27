@@ -3,14 +3,25 @@ package com.mk.skycast.feature.home
 import androidx.lifecycle.viewModelScope
 import com.mk.skycast.core.common.Outcome
 import com.mk.skycast.core.common.TimeTicker
+import com.mk.skycast.core.domain.brief.ExposurePlanner
+import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
+import com.mk.skycast.core.domain.usecase.ClearDayOverrideUseCase
 import com.mk.skycast.core.domain.usecase.LocalizeLocationNamesUseCase
+import com.mk.skycast.core.domain.usecase.ObserveDayOverridesUseCase
 import com.mk.skycast.core.domain.usecase.ObserveLocationWeatherUseCase
 import com.mk.skycast.core.domain.usecase.ObserveNetworkStatusUseCase
+import com.mk.skycast.core.domain.usecase.ObserveRoutineUseCase
 import com.mk.skycast.core.domain.usecase.ObserveUserPreferencesUseCase
 import com.mk.skycast.core.domain.usecase.RefreshWeatherUseCase
 import com.mk.skycast.core.domain.usecase.SelectLocationUseCase
+import com.mk.skycast.core.domain.usecase.SetDayOverrideUseCase
 import com.mk.skycast.core.domain.usecase.SyncDeviceLocationUseCase
+import com.mk.skycast.core.model.DayPlanOverride
 import com.mk.skycast.core.model.LocationWeather
+import com.mk.skycast.core.model.Outing
+import com.mk.skycast.core.model.OutingKind
+import com.mk.skycast.core.model.OutingSetting
+import com.mk.skycast.core.model.TravelMode
 import com.mk.skycast.core.model.Weather
 import com.mk.skycast.core.mvi.MviViewModel
 import com.mk.skycast.core.ui.text.toUiText
@@ -18,7 +29,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalTime
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -37,6 +51,11 @@ class HomeViewModel @Inject constructor(
     private val selectLocation: SelectLocationUseCase,
     private val syncDeviceLocation: SyncDeviceLocationUseCase,
     private val localizeLocationNames: LocalizeLocationNamesUseCase,
+    observeDailyBrief: ObserveDailyBriefUseCase,
+    observeRoutine: ObserveRoutineUseCase,
+    observeDayOverrides: ObserveDayOverridesUseCase,
+    private val setDayOverride: SetDayOverrideUseCase,
+    private val clearDayOverride: ClearDayOverrideUseCase,
     private val clock: Clock,
     ticker: TimeTicker,
 ) : MviViewModel<HomeState, HomeIntent, HomeEffect>(HomeState()) {
@@ -65,6 +84,10 @@ class HomeViewModel @Inject constructor(
             if (pages.isEmpty()) maybeAutoLocate()
         }.launchIn(viewModelScope)
 
+        combine(observeRoutine(), observeDayOverrides(), observeDailyBrief()) { routine, overrides, brief ->
+            reduce { copy(routine = routine, overrides = overrides, brief = brief) }
+        }.launchIn(viewModelScope)
+
         observeNetworkStatus()
             .onEach { online ->
                 val cameBackOnline = online && currentState.isOffline
@@ -77,16 +100,109 @@ class HomeViewModel @Inject constructor(
     override fun onIntent(intent: HomeIntent) {
         when (intent) {
             HomeIntent.ScreenResumed -> startAutoRefresh()
+
             HomeIntent.ScreenPaused -> stopAutoRefresh()
+
             is HomeIntent.DisplayLanguageChanged -> viewModelScope.launch { localizeLocationNames(intent.languageCode) }
+
             HomeIntent.Refresh -> refreshSelected(force = true, userInitiated = true)
+
             is HomeIntent.PageChanged -> onPageChanged(intent.index)
+
             HomeIntent.UseDeviceLocationClicked -> onUseDeviceLocation()
+
             is HomeIntent.LocationPermissionResult -> onPermissionResult(intent.granted)
+
             HomeIntent.OpenPlacesClicked -> emitEffect(HomeEffect.NavigateToPlaces)
+
             HomeIntent.OpenSettingsClicked -> emitEffect(HomeEffect.NavigateToSettings)
+
+            HomeIntent.OpenRoutineClicked -> emitEffect(HomeEffect.NavigateToRoutine)
+
+            HomeIntent.BriefExpandToggled -> reduce { copy(isBriefExpanded = !isBriefExpanded) }
+
+            HomeIntent.PlansChangedClicked -> openPlanEditor()
+
+            is HomeIntent.PlanDayTypeChanged -> editPlan { copy(dayType = intent.dayType) }
+
+            is HomeIntent.PlanOutingToggled -> editPlan {
+                val ids = if (intent.going) {
+                    cancelledOutingIds - intent.outingId
+                } else {
+                    cancelledOutingIds +
+                        intent.outingId
+                }
+                copy(cancelledOutingIds = ids)
+            }
+
+            HomeIntent.PlanAddOutingClicked -> editPlan { copy(addedOutings = addedOutings + oneTimeOuting()) }
+
+            is HomeIntent.PlanAddedOutingChanged -> editPlan {
+                copy(addedOutings = addedOutings.map { if (it.id == intent.outing.id) intent.outing else it })
+            }
+
+            is HomeIntent.PlanAddedOutingRemoved -> editPlan {
+                copy(addedOutings = addedOutings.filterNot { it.id == intent.outingId })
+            }
+
+            HomeIntent.PlanSaveClicked -> savePlan()
+
+            HomeIntent.PlanResetClicked -> resetPlan()
+
+            HomeIntent.PlanDismissed -> reduce { copy(planEditor = null) }
         }
     }
+
+    /** "Plans changed?" edits the day the brief is about, starting from any saved change. */
+    private fun openPlanEditor() {
+        val state = currentState
+        val routine = state.routine ?: return
+        val date = state.brief?.date ?: ObserveDailyBriefUseCase.briefDate(clock.instant(), ZoneId.systemDefault())
+        val saved = state.overrides.firstOrNull { it.date == date }
+        reduce {
+            copy(
+                planEditor = PlanEditor(
+                    date = date,
+                    usualDayType = ExposurePlanner.dayType(routine, null, date),
+                    usualOutings = routine.outings.filter { date.dayOfWeek in it.days },
+                    draft = saved ?: DayPlanOverride(date),
+                    hasSavedOverride = saved != null,
+                ),
+            )
+        }
+    }
+
+    private fun editPlan(transform: DayPlanOverride.() -> DayPlanOverride) = reduce {
+        copy(planEditor = planEditor?.let { it.copy(draft = it.draft.transform()) })
+    }
+
+    private fun savePlan() {
+        val editor = currentState.planEditor ?: return
+        // Choosing the usual day type again is not a change.
+        val draft = editor.draft.let { if (it.dayType == editor.usualDayType) it.copy(dayType = null) else it }
+        reduce { copy(planEditor = null) }
+        viewModelScope.launch {
+            val isEmpty = draft.dayType == null && draft.addedOutings.isEmpty() && draft.cancelledOutingIds.isEmpty()
+            if (isEmpty) clearDayOverride(draft.date) else setDayOverride(draft)
+        }
+    }
+
+    private fun resetPlan() {
+        val editor = currentState.planEditor ?: return
+        reduce { copy(planEditor = null) }
+        viewModelScope.launch { clearDayOverride(editor.date) }
+    }
+
+    private fun oneTimeOuting() = Outing(
+        id = UUID.randomUUID().toString(),
+        kind = OutingKind.OUTING,
+        customLabel = null,
+        days = emptySet(),
+        departAt = LocalTime.of(ONE_TIME_OUTING_DEPART_HOUR, 0),
+        returnAt = LocalTime.of(ONE_TIME_OUTING_RETURN_HOUR, 0),
+        mode = currentState.routine?.commute?.mode ?: TravelMode.CAR,
+        setting = OutingSetting.OUTDOORS,
+    )
 
     /** While visible: refresh now if stale, then keep polling in step with the API update cadence. */
     private fun startAutoRefresh() {
@@ -189,5 +305,7 @@ class HomeViewModel @Inject constructor(
         val AUTO_REFRESH_INTERVAL: Duration = Duration.ofMinutes(15)
         val STALE_AFTER: Duration = Duration.ofMinutes(30)
         const val HOURS_SHOWN = 24
+        private const val ONE_TIME_OUTING_DEPART_HOUR = 19
+        private const val ONE_TIME_OUTING_RETURN_HOUR = 22
     }
 }

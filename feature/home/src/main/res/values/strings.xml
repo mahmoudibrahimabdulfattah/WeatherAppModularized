@@ -50,4 +50,29 @@
         <item quantity="one">Updated %1$s hour ago</item>
         <item quantity="other">Updated %1$s hours ago</item>
     </plurals>
+    <string name="home_brief_edit_routine">Edit my routine</string>
+    <string name="home_brief_changed">plans changed</string>
+    <string name="home_brief_plans_changed">Plans changed?</string>
+    <string name="home_brief_more">Details</string>
+    <string name="home_brief_less">Less</string>
+    <string name="home_brief_partial">Part of your day is beyond the current forecast; check again later.</string>
+    <string name="home_brief_based_on">Based on the forecast from %1$s</string>
+    <string name="home_brief_prompt_title">Be ready for tomorrow</string>
+    <string name="home_brief_prompt_body">Tell Skycast when you\'re usually out and get a nightly brief on what to wear, what to carry and when the weather turns.</string>
+    <string name="home_brief_prompt_action">Set up my routine</string>
+    <string name="home_plan_title">Plans for %1$s</string>
+    <string name="home_plan_hint">Only this day changes; your routine stays the same.</string>
+    <string name="home_plan_away">Going to work</string>
+    <string name="home_plan_home">Staying home</string>
+    <string name="home_plan_off">Day off</string>
+    <string name="home_plan_times">%1$s–%2$s</string>
+    <string name="home_plan_add_outing">Going out</string>
+    <string name="home_plan_one_time">One-time outing</string>
+    <string name="home_plan_remove">Remove</string>
+    <string name="home_plan_leave">Leave</string>
+    <string name="home_plan_return">Return</string>
+    <string name="home_plan_outdoors">Outdoors</string>
+    <string name="home_plan_indoors">Indoors</string>
+    <string name="home_plan_reset">Back to routine</string>
+    <string name="home_plan_save">Save for this day</string>
 </resources>
