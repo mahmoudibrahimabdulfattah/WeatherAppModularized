@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.mk.skycast.core.designsystem.components.rememberReducedMotion
@@ -39,6 +40,7 @@ private const val HERO_MAX_FONT_SP = 120f
 private const val HERO_GLYPH_WIDTH_RATIO = 0.58f
 private const val FADE_IN_MS = 350
 private const val FADE_OUT_MS = 250
+private const val MINUTES_PER_HOUR = 60
 
 /** Icon, big temperature, condition, feels-like, high/low, local time and a live "updated" label. */
 @Composable
@@ -79,11 +81,7 @@ internal fun WeatherHero(page: WeatherPage, now: Instant, formatter: WeatherForm
             style = MaterialTheme.typography.bodyMedium,
         )
         Text(
-            text = if (minutesSinceUpdate < 1) {
-                stringResource(R.string.home_just_now)
-            } else {
-                stringResource(R.string.home_updated, formatter.number(minutesSinceUpdate))
-            },
+            text = updatedLabel(minutesSinceUpdate, formatter),
             modifier = Modifier.padding(top = SkySpace.tiny),
             style = MaterialTheme.typography.labelSmall,
             color = SkyColors.MutedSky,
@@ -121,5 +119,22 @@ private fun HeroTemperature(temperature: String, modifier: Modifier = Modifier) 
                 lineHeight = fontSize * 1.1f,
             )
         }
+    }
+}
+
+/** "Just now", then minutes, then hours — pluralized per locale (Arabic has six plural forms). */
+@Composable
+private fun updatedLabel(minutes: Int, formatter: WeatherFormatter): String = when {
+    minutes < 1 -> stringResource(R.string.home_just_now)
+
+    minutes < MINUTES_PER_HOUR -> pluralStringResource(
+        R.plurals.home_updated_minutes,
+        minutes,
+        formatter.number(minutes),
+    )
+
+    else -> {
+        val hours = minutes / MINUTES_PER_HOUR
+        pluralStringResource(R.plurals.home_updated_hours, hours, formatter.number(hours))
     }
 }
