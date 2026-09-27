@@ -4,6 +4,8 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.mk.skycast.core.common.DataError
 import com.mk.skycast.core.common.Outcome
+import com.mk.skycast.core.domain.ask.AnswerAskQuestionUseCase
+import com.mk.skycast.core.domain.ask.AskQuestion
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
 import com.mk.skycast.core.domain.usecase.ClearDayOverrideUseCase
 import com.mk.skycast.core.domain.usecase.LocalizeLocationNamesUseCase
@@ -33,6 +35,7 @@ import java.time.Clock
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneOffset
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
@@ -68,6 +71,7 @@ class HomeViewModelTest {
             observeDailyBrief = ObserveDailyBriefUseCase(routines, locations, weather, ticker),
             observeRoutine = ObserveRoutineUseCase(routines),
             observeDayOverrides = ObserveDayOverridesUseCase(routines),
+            answerAskQuestion = AnswerAskQuestionUseCase(routines, locations, weather, preferences),
             setDayOverride = SetDayOverrideUseCase(routines),
             clearDayOverride = ClearDayOverrideUseCase(routines),
             clock = clock,
@@ -247,5 +251,18 @@ class HomeViewModelTest {
         vm.onIntent(HomeIntent.PlanSaveClicked)
 
         assertThat(routines.currentOverrides).isEmpty()
+    }
+
+    @Test
+    fun `opening ask and selecting a question stores an answer`() = runTest {
+        weather.emit(TestData.weather(1))
+        val vm = createViewModel(saved = listOf(TestData.location(1)))
+
+        vm.onIntent(HomeIntent.AskOpened(1))
+        vm.onIntent(HomeIntent.AskQuestionSelected(AskQuestion.RAIN_NEXT_DAYS))
+        runCurrent()
+
+        assertThat(vm.state.value.askSheet?.question).isEqualTo(AskQuestion.RAIN_NEXT_DAYS)
+        assertThat(vm.state.value.askSheet?.answer).isNotNull()
     }
 }

@@ -102,6 +102,7 @@ internal fun LocationPager(
                         now = state.now,
                         formatter = formatter,
                         brief = briefSlot(state, page, formatter, onIntent),
+                        ask = askSlot(state, page, onIntent),
                     )
 
                     error != null -> PageError(error, onRetry = { onIntent(HomeIntent.Refresh) })
@@ -198,6 +199,14 @@ private fun PageError(error: UiText, onRetry: () -> Unit, modifier: Modifier = M
         Button(onClick = onRetry, modifier = Modifier.padding(top = SkySpace.large)) {
             Text(stringResource(R.string.home_retry))
         }
+    }
+}
+
+@Composable
+private fun askSlot(state: HomeState, page: WeatherPage, onIntent: (HomeIntent) -> Unit): (@Composable () -> Unit)? {
+    if (page.weather == null || page.location.id != state.briefLocationId) return null
+    return {
+        AskEntryRow(locationName = page.location.name, onClick = { onIntent(HomeIntent.AskOpened(page.location.id)) })
     }
 }
 

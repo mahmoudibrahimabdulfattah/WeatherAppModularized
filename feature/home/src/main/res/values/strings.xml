@@ -75,4 +75,9 @@
     <string name="home_plan_indoors">Indoors</string>
     <string name="home_plan_reset">Back to routine</string>
     <string name="home_plan_save">Save for this day</string>
+    <string name="home_ask_entry_title">Ask Skycast</string>
+    <string name="home_ask_entry_subtitle">Everyday answers for %1$s</string>
+    <string name="home_ask_title">Ask Skycast</string>
+    <string name="home_ask_context">%1$s · %2$s</string>
+    <string name="home_ask_why">Why this answer?</string>
 </resources>

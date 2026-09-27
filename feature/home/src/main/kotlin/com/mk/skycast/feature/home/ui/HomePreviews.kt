@@ -6,14 +6,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import com.mk.skycast.core.designsystem.theme.SkycastTheme
+import com.mk.skycast.core.domain.ask.AskAnswer
+import com.mk.skycast.core.domain.ask.AskQuestion
+import com.mk.skycast.core.domain.ask.AskReason
+import com.mk.skycast.core.domain.ask.ExerciseKind
+import com.mk.skycast.core.domain.ask.TimeWindow
 import com.mk.skycast.core.model.AirQuality
 import com.mk.skycast.core.model.CurrentWeather
 import com.mk.skycast.core.model.DailyForecast
+import com.mk.skycast.core.model.ForecastCoverage
 import com.mk.skycast.core.model.GeoPoint
 import com.mk.skycast.core.model.HourlyForecast
 import com.mk.skycast.core.model.SavedLocation
+import com.mk.skycast.core.model.UserPreferences
 import com.mk.skycast.core.model.Weather
 import com.mk.skycast.core.model.WeatherCondition
+import com.mk.skycast.core.ui.ask.rememberAskText
+import com.mk.skycast.core.ui.format.rememberWeatherFormatter
+import com.mk.skycast.feature.home.AskSheetState
 import com.mk.skycast.feature.home.HomeState
 import com.mk.skycast.feature.home.WeatherPage
 import java.time.Duration
@@ -85,7 +95,7 @@ private object HomePreviewData {
         fetchedAt = now.minus(Duration.ofMinutes(3)),
     )
 
-    private val location = SavedLocation(
+    val location = SavedLocation(
         id = 1,
         name = "Cairo",
         region = "Cairo Governorate",
@@ -138,3 +148,43 @@ private fun HomeWelcomePreview() = HomePreview(HomeState(isLoading = false))
 @Preview(name = "Home · offline", widthDp = 393, heightDp = 852)
 @Composable
 private fun HomeOfflinePreview() = HomePreview(HomePreviewData.state().copy(isOffline = true))
+
+@Composable
+private fun AskSheetPreview(darkTheme: Boolean = false) {
+    val answer = AskAnswer.ExerciseWindow(
+        kind = ExerciseKind.WALK,
+        best = TimeWindow(HomePreviewData.now.plus(Duration.ofHours(2)), HomePreviewData.now.plus(Duration.ofHours(4))),
+        alternatives = emptyList(),
+        feelsLikeRangeC = 24.0..26.0,
+        reasons = listOf(AskReason.COMFORTABLE_TEMP, AskReason.NO_RAIN, AskReason.CALM_WIND),
+        forecastFetchedAt = HomePreviewData.weather.fetchedAt,
+        coverage = ForecastCoverage.FULL,
+    )
+    val formatter = rememberWeatherFormatter(UserPreferences())
+    SkycastTheme(darkTheme = darkTheme) {
+        AskSheet(
+            sheet = AskSheetState(
+                location = HomePreviewData.location,
+                zoneId = HomePreviewData.weather.zoneId,
+                question = AskQuestion.BEST_EXERCISE_TIME,
+                exercise = ExerciseKind.WALK,
+                answer = answer,
+            ),
+            askText = rememberAskText(formatter, HomePreviewData.weather.zoneId),
+            now = HomePreviewData.now,
+            onIntent = {},
+        )
+    }
+}
+
+@Preview(name = "Ask Skycast · light", widthDp = 393, heightDp = 852)
+@Composable
+private fun AskSheetLightPreview() = AskSheetPreview()
+
+@Preview(name = "Ask Skycast · dark", uiMode = Configuration.UI_MODE_NIGHT_YES, widthDp = 393, heightDp = 852)
+@Composable
+private fun AskSheetDarkPreview() = AskSheetPreview(darkTheme = true)
+
+@Preview(name = "Ask Skycast · Arabic", locale = "ar", widthDp = 393, heightDp = 852)
+@Composable
+private fun AskSheetArabicPreview() = AskSheetPreview()
