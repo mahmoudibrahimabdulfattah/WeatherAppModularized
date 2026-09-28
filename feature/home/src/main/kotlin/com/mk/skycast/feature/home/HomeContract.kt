@@ -4,6 +4,7 @@ import com.mk.skycast.core.domain.ai.AiWording
 import com.mk.skycast.core.domain.ai.RephraseRequest
 import com.mk.skycast.core.domain.ask.AskAnswer
 import com.mk.skycast.core.domain.ask.AskQuestion
+import com.mk.skycast.core.domain.ask.DayHint
 import com.mk.skycast.core.domain.ask.ExerciseKind
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
 import com.mk.skycast.core.model.ComfortVote
@@ -67,6 +68,12 @@ data class AskSheetState(
     val answer: AskAnswer? = null,
     /** Optional AI wording for [answer]; null until requested. */
     val aiWording: AiWording? = null,
+    /** What the user typed, if the current answer came from the question box. */
+    val typedQuestion: String? = null,
+    /** Day named in the typed question, narrowing the answer to it. */
+    val dayHint: DayHint? = null,
+    /** AI answer to a typed question no guided answer covers. */
+    val freeAnswer: AiWording? = null,
 )
 
 /** One-day change of plans, edited as a draft until saved. */
@@ -120,6 +127,7 @@ sealed interface HomeIntent : UiIntent {
     /** The sheet rendered an answer; ask for friendlier wording of exactly these facts. */
     data class AskWordingRequested(val request: RephraseRequest) : HomeIntent
     data class AskAiConsentGiven(val granted: Boolean) : HomeIntent
+    data class AskTyped(val text: String, val languageTag: String) : HomeIntent
 
     /** From the notification: open the sheet as soon as the routine is loaded. */
     data object OpenPlansRequested : HomeIntent

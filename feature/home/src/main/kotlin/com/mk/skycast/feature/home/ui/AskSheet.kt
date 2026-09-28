@@ -17,9 +17,12 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
@@ -29,8 +32,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -46,10 +51,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.mk.skycast.core.designsystem.components.GlassCard
 import com.mk.skycast.core.designsystem.components.SkyChoiceRow
@@ -103,6 +110,7 @@ internal fun AskSheet(
 ) {
     val scroll = rememberScrollState()
     val latestOnIntent by rememberUpdatedState(onIntent)
+    val languageTag = LocalConfiguration.current.locales[0].toLanguageTag()
     val answerRequester = remember { BringIntoViewRequester() }
     LaunchedEffect(sheet.answer) {
         if (sheet.answer != null) answerRequester.bringIntoView()
@@ -143,6 +151,17 @@ internal fun AskSheet(
                     )
                 }
             }
+            AskQuestionBox(onAsk = { onIntent(HomeIntent.AskTyped(it, languageTag)) })
+            sheet.typedQuestion?.let {
+                Text(
+                    stringResource(R.string.home_ask_you_asked, it),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            sheet.freeAnswer?.let {
+                FreeAnswer(it, onConsent = { granted -> onIntent(HomeIntent.AskAiConsentGiven(granted)) })
+            }
             if (sheet.question == AskQuestion.BEST_EXERCISE_TIME) {
                 SkyChoiceRow(
                     title = null,
@@ -154,18 +173,19 @@ internal fun AskSheet(
             }
             sheet.answer?.let { answer ->
                 val display = askText.display(answer, now)
-                val languageTag = LocalConfiguration.current.locales[0].toLanguageTag()
-                val request = remember(display.headline, display.chips, display.reasons, languageTag) {
-                    sheet.question?.let { question ->
-                        RephraseRequest(
-                            question = question,
-                            languageTag = languageTag,
-                            headline = display.headline.withoutIsolates(),
-                            facts = display.chips.map { it.withoutIsolates() },
-                            reasons = display.reasons.map { it.withoutIsolates() },
-                        )
+                val request =
+                    remember(display.headline, display.chips, display.reasons, languageTag, sheet.typedQuestion) {
+                        sheet.question?.let { question ->
+                            RephraseRequest(
+                                question = question,
+                                languageTag = languageTag,
+                                headline = display.headline.withoutIsolates(),
+                                facts = display.chips.map { it.withoutIsolates() },
+                                reasons = display.reasons.map { it.withoutIsolates() },
+                                userQuestion = sheet.typedQuestion,
+                            )
+                        }
                     }
-                }
                 LaunchedEffect(request) { request?.let { latestOnIntent(HomeIntent.AskWordingRequested(it)) } }
                 AnswerBody(
                     display = display,
@@ -297,3 +317,48 @@ private fun AiConsentCard(onConsent: (Boolean) -> Unit, modifier: Modifier = Mod
         }
     }
 }
+
+/** Free-text question; routed to a guided answer or, if allowed, answered by AI from the forecast. */
+@Composable
+private fun AskQuestionBox(onAsk: (String) -> Unit, modifier: Modifier = Modifier) {
+    var text by rememberSaveable { mutableStateOf("") }
+    val keyboard = LocalSoftwareKeyboardController.current
+    val submit = {
+        if (text.isNotBlank()) {
+            onAsk(text)
+            keyboard?.hide()
+        }
+    }
+    OutlinedTextField(
+        value = text,
+        onValueChange = { text = it.take(MAX_QUESTION_CHARS) },
+        modifier = modifier.fillMaxWidth(),
+        placeholder = { Text(stringResource(R.string.home_ask_placeholder)) },
+        supportingText = { Text(stringResource(R.string.home_ask_privacy)) },
+        singleLine = true,
+        shape = MaterialTheme.shapes.extraLarge,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+        keyboardActions = KeyboardActions(onSend = { submit() }),
+        trailingIcon = {
+            IconButton(onClick = submit, enabled = text.isNotBlank()) {
+                Icon(Icons.AutoMirrored.Rounded.Send, contentDescription = stringResource(R.string.home_ask_send))
+            }
+        },
+    )
+}
+
+@Composable
+private fun FreeAnswer(wording: AiWording, onConsent: (Boolean) -> Unit, modifier: Modifier = Modifier) {
+    when (wording) {
+        AiWording.Hidden, AiWording.Declined -> AiNote(stringResource(R.string.home_ask_no_match), modifier)
+
+        AiWording.Unavailable, AiWording.DailyLimitReached -> Column(modifier) {
+            AiSection(wording, onConsent)
+            AiNote(stringResource(R.string.home_ask_no_match))
+        }
+
+        else -> AiSection(wording, onConsent, modifier)
+    }
+}
+
+private const val MAX_QUESTION_CHARS = 200

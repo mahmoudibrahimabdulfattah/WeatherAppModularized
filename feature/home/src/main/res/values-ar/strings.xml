@@ -104,4 +104,9 @@
     <string name="home_comfort_right">مناسب تمامًا</string>
     <string name="home_comfort_hot">شعرت بالحر</string>
     <string name="home_comfort_thanks">تم، أصبحت نصائح الملابس مضبوطة عليك.</string>
+    <string name="home_ask_placeholder">أو اسأل أي شيء عن الطقس…</string>
+    <string name="home_ask_privacy">لا تكتب بيانات شخصية.</string>
+    <string name="home_ask_send">اسأل</string>
+    <string name="home_ask_you_asked">سؤالك: %1$s</string>
+    <string name="home_ask_no_match">أستطيع الإجابة بشكل أفضل عبر أحد الأسئلة أعلاه.</string>
 </resources>

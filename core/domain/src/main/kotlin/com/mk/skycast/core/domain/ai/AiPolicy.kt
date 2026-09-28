@@ -6,6 +6,7 @@ object AiPolicy {
     const val DAILY_CAP = 5
 
     private const val MAX_OUTPUT_CHARS = 420
+    private const val MAX_FREE_ANSWER_CHARS = 700
 
     /** Launch countries. The free tier may not serve the EEA, UK or Switzerland. */
     private val ALLOWED_COUNTRIES = setOf("EG")
@@ -23,13 +24,19 @@ object AiPolicy {
      * Cleans model output, or returns null to fall back to the deterministic answer:
      * no markdown, bounded length, and no number that the facts don't contain.
      */
-    fun validate(output: String, request: RephraseRequest): String? {
+    fun validate(output: String, request: RephraseRequest): String? =
+        validate(output, request.allowedText, MAX_OUTPUT_CHARS)
+
+    fun validate(output: String, request: FreeQuestionRequest): String? =
+        validate(output, request.allowedText, MAX_FREE_ANSWER_CHARS)
+
+    private fun validate(output: String, allowedText: String, maxChars: Int): String? {
         val text = output
             .replace(Regex("[*_#`>]"), "")
             .replace(Regex("\\s+"), " ")
             .trim()
-        if (text.isEmpty() || text.length > MAX_OUTPUT_CHARS) return null
-        val allowed = numbers(request.allowedText)
+        if (text.isEmpty() || text.length > maxChars) return null
+        val allowed = numbers(allowedText)
         if (SPELLED_NUMBER.containsMatchIn(text)) return null
         return text.takeIf { numbers(it).all { number -> number in allowed } }
     }
