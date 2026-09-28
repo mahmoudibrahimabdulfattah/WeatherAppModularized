@@ -8,6 +8,7 @@ import com.mk.skycast.core.model.Routine
 import com.mk.skycast.core.model.TravelMode
 import com.mk.skycast.core.model.Weather
 import com.mk.skycast.core.testing.FakeBriefHistoryRepository
+import com.mk.skycast.core.testing.FakeComfortRepository
 import com.mk.skycast.core.testing.FakeLocationRepository
 import com.mk.skycast.core.testing.FakeRoutineRepository
 import com.mk.skycast.core.testing.FakeWeatherRepository
@@ -68,6 +69,7 @@ class BriefNotificationTest {
         FakeLocationRepository(listOf(TestData.location(1))),
         weather,
         history,
+        FakeComfortRepository(),
     )
 
     private fun rainyWeather(): Weather = TestData.weather(1).let { w ->

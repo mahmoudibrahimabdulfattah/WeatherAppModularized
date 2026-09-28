@@ -23,6 +23,8 @@ data class DailyBrief(
     val day: DayOutlook,
     val coverage: ForecastCoverage,
     val forecastFetchedAt: Instant,
+    /** Personal adjustment learned from feedback; negative = the user feels the cold more. */
+    val comfortOffsetC: Double = 0.0,
 ) {
     val hasOutings: Boolean get() = windows.isNotEmpty()
 }

@@ -22,11 +22,13 @@ sealed interface SettingsIntent : UiIntent {
     data object OpenDataSourceClicked : SettingsIntent
     data object OpenRoutineClicked : SettingsIntent
     data class AiWordingToggled(val enabled: Boolean) : SettingsIntent
+    data object ResetComfortClicked : SettingsIntent
     data object BackClicked : SettingsIntent
 }
 
 sealed interface SettingsEffect : UiEffect {
     data object NavigateBack : SettingsEffect
     data object OpenRoutine : SettingsEffect
+    data object ComfortReset : SettingsEffect
     data class OpenUrl(val url: String) : SettingsEffect
 }

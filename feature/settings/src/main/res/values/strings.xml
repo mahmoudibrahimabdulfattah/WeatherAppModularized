@@ -9,6 +9,8 @@
     <string name="settings_ai">AI</string>
     <string name="settings_ai_wording">AI wording in Ask Skycast</string>
     <string name="settings_ai_wording_hint">Friendlier explanations written by Google Gemini from the forecast facts</string>
+    <string name="settings_comfort_reset">Reset what Skycast learned about how you feel</string>
+    <string name="settings_comfort_reset_done">Clothing advice is back to the defaults</string>
     <string name="settings_units">Units</string>
     <string name="settings_temperature">Temperature</string>
     <string name="settings_wind">Wind speed</string>

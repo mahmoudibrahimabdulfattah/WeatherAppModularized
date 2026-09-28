@@ -3,6 +3,7 @@ package com.mk.skycast.core.domain.brief
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.mk.skycast.core.model.Routine
+import com.mk.skycast.core.testing.FakeComfortRepository
 import com.mk.skycast.core.testing.FakeLocationRepository
 import com.mk.skycast.core.testing.FakeRoutineRepository
 import com.mk.skycast.core.testing.FakeTimeTicker
@@ -19,7 +20,7 @@ class ObserveDailyBriefUseCaseTest {
         FakeLocationRepository(listOf(TestData.location(1), TestData.location(2, "Giza", sortOrder = 1)))
     private val weather = FakeWeatherRepository()
     private val ticker = FakeTimeTicker()
-    private val useCase = ObserveDailyBriefUseCase(routines, locations, weather, ticker)
+    private val useCase = ObserveDailyBriefUseCase(routines, locations, weather, FakeComfortRepository(), ticker)
 
     @Test
     fun `nothing is built until the routine is set up`() = runTest {

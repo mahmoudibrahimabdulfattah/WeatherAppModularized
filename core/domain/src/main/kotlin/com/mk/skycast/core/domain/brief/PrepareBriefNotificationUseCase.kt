@@ -1,6 +1,7 @@
 package com.mk.skycast.core.domain.brief
 
 import com.mk.skycast.core.domain.repository.BriefHistoryRepository
+import com.mk.skycast.core.domain.repository.ComfortRepository
 import com.mk.skycast.core.domain.repository.LocationRepository
 import com.mk.skycast.core.domain.repository.RoutineRepository
 import com.mk.skycast.core.domain.repository.WeatherRepository
@@ -28,6 +29,7 @@ class PrepareBriefNotificationUseCase @Inject constructor(
     private val locationRepository: LocationRepository,
     private val weatherRepository: WeatherRepository,
     private val history: BriefHistoryRepository,
+    private val comfortRepository: ComfortRepository,
 ) {
     suspend operator fun invoke(run: BriefRun, now: Instant): BriefNotice? {
         val routine = routineRepository.routine.first()
@@ -39,7 +41,8 @@ class PrepareBriefNotificationUseCase @Inject constructor(
         val today = now.atZone(weather.zoneId).toLocalDate()
         val date = if (run == BriefRun.NIGHTLY) ObserveDailyBriefUseCase.briefDate(now, weather.zoneId) else today
         val override = routineRepository.overrides.first().firstOrNull { it.date == date }
-        val brief = BriefEngine.build(date, location.id, routine, override, weather) ?: return null
+        val comfortOffset = ComfortCalibration.offsetC(comfortRepository.feedback.first())
+        val brief = BriefEngine.build(date, location.id, routine, override, weather, comfortOffset) ?: return null
         val fingerprint = fingerprint(brief)
 
         return when (run) {

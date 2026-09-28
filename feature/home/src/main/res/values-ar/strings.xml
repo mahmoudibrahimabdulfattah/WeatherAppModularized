@@ -98,4 +98,10 @@
     <string name="home_ai_consent_adult">عمري 18 عامًا أو أكثر</string>
     <string name="home_ai_consent_accept">استخدام الصياغة بالذكاء الاصطناعي</string>
     <string name="home_ai_consent_decline">المتابعة بدون ذكاء اصطناعي</string>
+    <string name="home_comfort_title">كيف كان الجو اليوم؟</string>
+    <string name="home_comfort_body">أخبر سكاي كاست كيف شعرت بالطقس عند خروجك اليوم. إجاباتك تضبط نصائح الملابس عليك.</string>
+    <string name="home_comfort_cold">شعرت بالبرد</string>
+    <string name="home_comfort_right">مناسب تمامًا</string>
+    <string name="home_comfort_hot">شعرت بالحر</string>
+    <string name="home_comfort_thanks">تم، أصبحت نصائح الملابس مضبوطة عليك.</string>
 </resources>

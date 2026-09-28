@@ -26,6 +26,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +41,7 @@ import com.mk.skycast.core.designsystem.theme.SkyColors
 import com.mk.skycast.core.designsystem.theme.SkyIconSize
 import com.mk.skycast.core.designsystem.theme.SkySpace
 import com.mk.skycast.core.model.CarryItem
+import com.mk.skycast.core.model.ComfortVote
 import com.mk.skycast.core.model.DailyBrief
 import com.mk.skycast.core.model.ForecastCoverage
 import com.mk.skycast.core.ui.brief.BriefText
@@ -76,6 +78,9 @@ internal fun BriefCard(
         )
         Text(text.headline(brief, now), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
         text.wear(brief)?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+        text.comfortNote(brief)?.let {
+            Text(it, style = MaterialTheme.typography.bodyMedium, color = SkyColors.MutedSky)
+        }
         if (!brief.hasOutings) Text(text.dayOutlook(brief), style = MaterialTheme.typography.bodyLarge)
         if (brief.carry.isNotEmpty()) {
             FlowRow(
@@ -172,4 +177,40 @@ private fun CarryItem.icon(): ImageVector = when (this) {
     CarryItem.SUNSCREEN -> Icons.Rounded.WbSunny
     CarryItem.WATER -> Icons.Rounded.WaterDrop
     CarryItem.MASK -> Icons.Rounded.Masks
+}
+
+/** Evening check-in once the user is back: teaches the clothing advice how this person feels. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+internal fun ComfortPromptCard(onVote: (ComfortVote) -> Unit, modifier: Modifier = Modifier) {
+    GlassCard(modifier.fillMaxWidth()) {
+        CardTitle(Icons.Rounded.Checkroom, stringResource(R.string.home_comfort_title))
+        Text(
+            stringResource(R.string.home_comfort_body),
+            style = MaterialTheme.typography.bodyMedium,
+            color = SkyColors.MutedSky,
+        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(SkySpace.small),
+            verticalArrangement = Arrangement.spacedBy(SkySpace.small),
+        ) {
+            ComfortVote.entries.forEach { vote ->
+                OutlinedButton(
+                    onClick = { onVote(vote) },
+                    modifier = Modifier.heightIn(min = SkySpace.touch),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = SkyColors.OnSky),
+                ) {
+                    Text(
+                        stringResource(
+                            when (vote) {
+                                ComfortVote.COLD -> R.string.home_comfort_cold
+                                ComfortVote.RIGHT -> R.string.home_comfort_right
+                                ComfortVote.HOT -> R.string.home_comfort_hot
+                            },
+                        ),
+                    )
+                }
+            }
+        }
+    }
 }

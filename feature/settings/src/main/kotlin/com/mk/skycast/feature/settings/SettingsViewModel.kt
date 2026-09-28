@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.mk.skycast.core.domain.ai.AiConsent
 import com.mk.skycast.core.domain.ai.ObserveAiAvailabilityUseCase
 import com.mk.skycast.core.domain.ai.SetAiConsentUseCase
+import com.mk.skycast.core.domain.brief.ResetComfortCalibrationUseCase
 import com.mk.skycast.core.domain.usecase.GetAppLanguageUseCase
 import com.mk.skycast.core.domain.usecase.ObserveUserPreferencesUseCase
 import com.mk.skycast.core.domain.usecase.PreferenceUpdate
@@ -22,6 +23,7 @@ class SettingsViewModel @Inject constructor(
     private val updatePreference: UpdateUserPreferenceUseCase,
     observeAiAvailability: ObserveAiAvailabilityUseCase,
     private val setAiConsent: SetAiConsentUseCase,
+    private val resetComfort: ResetComfortCalibrationUseCase,
 ) : MviViewModel<SettingsState, SettingsIntent, SettingsEffect>(SettingsState(language = getAppLanguage())) {
 
     init {
@@ -44,6 +46,11 @@ class SettingsViewModel @Inject constructor(
             SettingsIntent.OpenDataSourceClicked -> emitEffect(SettingsEffect.OpenUrl(DATA_SOURCE_URL))
 
             SettingsIntent.OpenRoutineClicked -> emitEffect(SettingsEffect.OpenRoutine)
+
+            SettingsIntent.ResetComfortClicked -> viewModelScope.launch {
+                resetComfort()
+                emitEffect(SettingsEffect.ComfortReset)
+            }
 
             // Turning it back on asks again (with the age check) on the next answer.
             is SettingsIntent.AiWordingToggled -> viewModelScope.launch {

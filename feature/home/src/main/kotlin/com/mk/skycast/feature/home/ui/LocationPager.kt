@@ -226,6 +226,9 @@ private fun briefSlot(
 
         brief != null && page.weather != null -> {
             {
+                if (state.comfortPromptDate != null) {
+                    ComfortPromptCard(onVote = { onIntent(HomeIntent.ComfortVoted(it)) })
+                }
                 BriefCard(
                     brief = brief,
                     text = rememberBriefText(formatter, page.weather.zoneId),

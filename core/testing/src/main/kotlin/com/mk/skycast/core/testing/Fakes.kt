@@ -13,6 +13,7 @@ import com.mk.skycast.core.domain.ai.RephraseRequest
 import com.mk.skycast.core.domain.repository.AppLanguageRepository
 import com.mk.skycast.core.domain.repository.BriefHistoryRepository
 import com.mk.skycast.core.domain.repository.BriefScheduler
+import com.mk.skycast.core.domain.repository.ComfortRepository
 import com.mk.skycast.core.domain.repository.DeviceLocationProvider
 import com.mk.skycast.core.domain.repository.LocationRepository
 import com.mk.skycast.core.domain.repository.NetworkMonitor
@@ -23,6 +24,8 @@ import com.mk.skycast.core.domain.repository.WeatherRepository
 import com.mk.skycast.core.domain.repository.WeatherSyncScheduler
 import com.mk.skycast.core.model.AppLanguage
 import com.mk.skycast.core.model.BriefFingerprint
+import com.mk.skycast.core.model.ComfortFeedback
+import com.mk.skycast.core.model.ComfortVote
 import com.mk.skycast.core.model.DayPlanOverride
 import com.mk.skycast.core.model.DeviceLocation
 import com.mk.skycast.core.model.PlaceSuggestion
@@ -241,4 +244,13 @@ class FakeAdviceGenerator(var result: Outcome<String, AiError> = Outcome.Success
         requests += request
         return result
     }
+}
+
+class FakeComfortRepository(initial: List<ComfortFeedback> = emptyList()) : ComfortRepository {
+    private val state = MutableStateFlow(initial)
+    override val feedback: Flow<List<ComfortFeedback>> = state
+    val current: List<ComfortFeedback> get() = state.value
+    override suspend fun record(date: LocalDate, vote: ComfortVote) =
+        state.update { list -> listOf(ComfortFeedback(date, vote)) + list.filterNot { it.date == date } }
+    override suspend fun reset() = state.update { emptyList() }
 }

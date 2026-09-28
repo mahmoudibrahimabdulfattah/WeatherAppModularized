@@ -81,6 +81,7 @@ object BriefEngine {
                 ForecastCoverage.PARTIAL
             },
             forecastFetchedAt = weather.fetchedAt,
+            comfortOffsetC = comfortOffsetC,
         )
     }
 

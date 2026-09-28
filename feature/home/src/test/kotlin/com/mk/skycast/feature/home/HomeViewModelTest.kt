@@ -10,7 +10,9 @@ import com.mk.skycast.core.domain.ai.RephraseRequest
 import com.mk.skycast.core.domain.ai.SetAiConsentUseCase
 import com.mk.skycast.core.domain.ask.AnswerAskQuestionUseCase
 import com.mk.skycast.core.domain.ask.AskQuestion
+import com.mk.skycast.core.domain.brief.ObserveComfortPromptUseCase
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
+import com.mk.skycast.core.domain.brief.RecordComfortVoteUseCase
 import com.mk.skycast.core.domain.usecase.ClearDayOverrideUseCase
 import com.mk.skycast.core.domain.usecase.LocalizeLocationNamesUseCase
 import com.mk.skycast.core.domain.usecase.ObserveDayOverridesUseCase
@@ -28,6 +30,7 @@ import com.mk.skycast.core.model.SavedLocation
 import com.mk.skycast.core.model.UserPreferences
 import com.mk.skycast.core.testing.FakeAdviceGenerator
 import com.mk.skycast.core.testing.FakeAiSettingsRepository
+import com.mk.skycast.core.testing.FakeComfortRepository
 import com.mk.skycast.core.testing.FakeDeviceLocationProvider
 import com.mk.skycast.core.testing.FakeLocationRepository
 import com.mk.skycast.core.testing.FakeNetworkMonitor
@@ -56,6 +59,7 @@ class HomeViewModelTest {
     private val network = FakeNetworkMonitor()
     private val deviceLocation = FakeDeviceLocationProvider()
     private val routines = FakeRoutineRepository()
+    private val comfort = FakeComfortRepository()
     private val aiSettings = FakeAiSettingsRepository()
     private val ticker = FakeTimeTicker()
     private lateinit var locations: FakeLocationRepository
@@ -75,10 +79,12 @@ class HomeViewModelTest {
             selectLocation = SelectLocationUseCase(preferences),
             syncDeviceLocation = SyncDeviceLocationUseCase(deviceLocation, locations, weather, preferences),
             localizeLocationNames = LocalizeLocationNamesUseCase(locations, deviceLocation),
-            observeDailyBrief = ObserveDailyBriefUseCase(routines, locations, weather, ticker),
+            observeDailyBrief = ObserveDailyBriefUseCase(routines, locations, weather, comfort, ticker),
+            observeComfortPrompt = ObserveComfortPromptUseCase(routines, comfort, ticker),
+            recordComfortVote = RecordComfortVoteUseCase(comfort),
             observeRoutine = ObserveRoutineUseCase(routines),
             observeDayOverrides = ObserveDayOverridesUseCase(routines),
-            answerAskQuestion = AnswerAskQuestionUseCase(routines, locations, weather, preferences),
+            answerAskQuestion = AnswerAskQuestionUseCase(routines, locations, weather, preferences, comfort),
             rephraseAnswer = RephraseAnswerUseCase(FakeAdviceGenerator(), aiSettings, { true }, clock),
             setAiConsent = SetAiConsentUseCase(aiSettings),
             setDayOverride = SetDayOverrideUseCase(routines),

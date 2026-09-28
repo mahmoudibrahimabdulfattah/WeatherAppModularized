@@ -1,10 +1,12 @@
 package com.mk.skycast.core.domain.brief
 
 import com.mk.skycast.core.common.TimeTicker
+import com.mk.skycast.core.domain.repository.ComfortRepository
 import com.mk.skycast.core.domain.repository.LocationRepository
 import com.mk.skycast.core.domain.repository.RoutineRepository
 import com.mk.skycast.core.domain.repository.WeatherRepository
 import com.mk.skycast.core.model.DailyBrief
+import com.mk.skycast.core.model.DayPlanOverride
 import com.mk.skycast.core.model.Routine
 import com.mk.skycast.core.model.SavedLocation
 import java.time.Instant
@@ -27,6 +29,7 @@ class ObserveDailyBriefUseCase @Inject constructor(
     private val routineRepository: RoutineRepository,
     private val locationRepository: LocationRepository,
     private val weatherRepository: WeatherRepository,
+    private val comfortRepository: ComfortRepository,
     private val ticker: TimeTicker,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -34,16 +37,33 @@ class ObserveDailyBriefUseCase @Inject constructor(
         routineRepository.routine,
         routineRepository.overrides,
         locationRepository.observeSavedLocations(),
-    ) { routine, overrides, locations -> Triple(routine, overrides, routineLocation(routine, locations)) }
-        .flatMapLatest { (routine, overrides, location) ->
+        comfortRepository.feedback,
+    ) { routine, overrides, locations, feedback ->
+        BriefInputs(routine, overrides, routineLocation(routine, locations), ComfortCalibration.offsetC(feedback))
+    }
+        .flatMapLatest { (routine, overrides, location, comfortOffset) ->
             if (!routine.isConfigured || location == null) return@flatMapLatest flowOf(null)
             combine(weatherRepository.observeWeather(location.id), ticker.ticks) { weather, now ->
                 weather ?: return@combine null
                 val date = briefDate(now, weather.zoneId)
-                BriefEngine.build(date, location.id, routine, overrides.firstOrNull { it.date == date }, weather)
+                BriefEngine.build(
+                    date,
+                    location.id,
+                    routine,
+                    overrides.firstOrNull { it.date == date },
+                    weather,
+                    comfortOffset,
+                )
             }
         }
         .distinctUntilChanged()
+
+    private data class BriefInputs(
+        val routine: Routine,
+        val overrides: List<DayPlanOverride>,
+        val location: SavedLocation?,
+        val comfortOffsetC: Double,
+    )
 
     companion object {
         private val SWITCH_TO_TOMORROW: LocalTime = LocalTime.NOON

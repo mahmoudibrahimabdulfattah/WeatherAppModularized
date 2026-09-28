@@ -11,7 +11,9 @@ import com.mk.skycast.core.domain.ai.SetAiConsentUseCase
 import com.mk.skycast.core.domain.ask.AnswerAskQuestionUseCase
 import com.mk.skycast.core.domain.ask.AskQuestion
 import com.mk.skycast.core.domain.brief.ExposurePlanner
+import com.mk.skycast.core.domain.brief.ObserveComfortPromptUseCase
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
+import com.mk.skycast.core.domain.brief.RecordComfortVoteUseCase
 import com.mk.skycast.core.domain.usecase.ClearDayOverrideUseCase
 import com.mk.skycast.core.domain.usecase.LocalizeLocationNamesUseCase
 import com.mk.skycast.core.domain.usecase.ObserveDayOverridesUseCase
@@ -31,6 +33,7 @@ import com.mk.skycast.core.model.OutingSetting
 import com.mk.skycast.core.model.TravelMode
 import com.mk.skycast.core.model.Weather
 import com.mk.skycast.core.mvi.MviViewModel
+import com.mk.skycast.core.ui.text.UiText
 import com.mk.skycast.core.ui.text.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
@@ -59,6 +62,8 @@ class HomeViewModel @Inject constructor(
     private val syncDeviceLocation: SyncDeviceLocationUseCase,
     private val localizeLocationNames: LocalizeLocationNamesUseCase,
     observeDailyBrief: ObserveDailyBriefUseCase,
+    observeComfortPrompt: ObserveComfortPromptUseCase,
+    private val recordComfortVote: RecordComfortVoteUseCase,
     observeRoutine: ObserveRoutineUseCase,
     observeDayOverrides: ObserveDayOverridesUseCase,
     private val answerAskQuestion: AnswerAskQuestionUseCase,
@@ -104,6 +109,10 @@ class HomeViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
 
+        observeComfortPrompt()
+            .onEach { reduce { copy(comfortPromptDate = it) } }
+            .launchIn(viewModelScope)
+
         observeNetworkStatus()
             .onEach { online ->
                 val cameBackOnline = online && currentState.isOffline
@@ -136,6 +145,14 @@ class HomeViewModel @Inject constructor(
             HomeIntent.OpenRoutineClicked -> emitEffect(HomeEffect.NavigateToRoutine)
 
             HomeIntent.BriefExpandToggled -> reduce { copy(isBriefExpanded = !isBriefExpanded) }
+
+            is HomeIntent.ComfortVoted -> currentState.comfortPromptDate?.let { date ->
+                reduce { copy(comfortPromptDate = null) }
+                viewModelScope.launch {
+                    recordComfortVote(date, intent.vote)
+                    emitEffect(HomeEffect.ShowMessage(UiText.Resource(R.string.home_comfort_thanks)))
+                }
+            }
 
             HomeIntent.PlansChangedClicked -> openPlanEditor()
 

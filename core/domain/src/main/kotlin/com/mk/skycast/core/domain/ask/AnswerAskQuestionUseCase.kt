@@ -1,6 +1,8 @@
 package com.mk.skycast.core.domain.ask
 
+import com.mk.skycast.core.domain.brief.ComfortCalibration
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
+import com.mk.skycast.core.domain.repository.ComfortRepository
 import com.mk.skycast.core.domain.repository.LocationRepository
 import com.mk.skycast.core.domain.repository.RoutineRepository
 import com.mk.skycast.core.domain.repository.UserPreferencesRepository
@@ -16,6 +18,7 @@ class AnswerAskQuestionUseCase @Inject constructor(
     private val locations: LocationRepository,
     private val weather: WeatherRepository,
     private val preferences: UserPreferencesRepository,
+    private val comfort: ComfortRepository,
 ) {
     suspend operator fun invoke(question: AskQuestion, exercise: ExerciseKind? = null, now: Instant): AskAnswer? {
         val routine = routines.routine.first()
@@ -30,6 +33,7 @@ class AnswerAskQuestionUseCase @Inject constructor(
                     override = routines.overrides.first().firstOrNull { it.date == overrideDate },
                     weather = forecast,
                     now = now,
+                    comfortOffsetC = ComfortCalibration.offsetC(comfort.feedback.first()),
                 )
             }
 

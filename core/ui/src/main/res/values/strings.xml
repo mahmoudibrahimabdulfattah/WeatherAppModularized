@@ -83,6 +83,8 @@
     <string name="brief_wear_heavy">a heavy coat, hat and gloves</string>
     <string name="brief_wear_line">Wear %1$s — it feels like %2$s when you leave at %3$s.</string>
     <string name="brief_wear_reason">It feels like %1$s when you leave at %2$s.</string>
+    <string name="brief_tuned_cold">Tuned to you: you feel the cold, so this advice runs a little warmer.</string>
+    <string name="brief_tuned_warm">Tuned to you: you run warm, so this advice runs a little lighter.</string>
     <string name="brief_wear_swing">It warms up to %1$s later, so pick something you can take off.</string>
 
     <string name="brief_when_out">on your way out</string>

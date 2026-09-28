@@ -9,6 +9,8 @@
     <string name="settings_ai">الذكاء الاصطناعي</string>
     <string name="settings_ai_wording">الصياغة بالذكاء الاصطناعي في «اسأل سكاي كاست»</string>
     <string name="settings_ai_wording_hint">شروح أكثر ودًّا يكتبها Google Gemini من حقائق التوقعات</string>
+    <string name="settings_comfort_reset">إعادة ضبط ما تعلّمه سكاي كاست عن إحساسك بالجو</string>
+    <string name="settings_comfort_reset_done">عادت نصائح الملابس إلى الإعدادات الافتراضية</string>
     <string name="settings_units">الوحدات</string>
     <string name="settings_temperature">درجة الحرارة</string>
     <string name="settings_wind">سرعة الرياح</string>
