@@ -56,6 +56,7 @@ dependencies {
     implementation(project(":feature:places"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:routine"))
+    implementation(project(":feature:widget"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

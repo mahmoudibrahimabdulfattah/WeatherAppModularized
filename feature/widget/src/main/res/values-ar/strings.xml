@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label">ملخص سكاي كاست</string>
+    <string name="widget_description">الطقس الآن وما تلبسه أو تحمله اليوم أو غدًا</string>
+    <string name="widget_setup">أعدّ روتينك لتحصل على ملخص يومي</string>
+    <string name="widget_no_location">افتح سكاي كاست لإضافة موقعك</string>
+</resources>
