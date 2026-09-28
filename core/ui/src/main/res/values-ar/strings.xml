@@ -119,6 +119,19 @@
     <string name="brief_hazard_high_uv">أشعة فوق بنفسجية مرتفعة جدًا %1$s، نحو %2$s.</string>
     <string name="brief_hazard_cold">برد شديد %1$s، نحو %2$s.</string>
 
+    <string name="brief_action_drive_flooded">الشوارع قد تغرق في طريقك</string>
+    <string name="brief_action_drive_fog">شبورة في طريق القيادة</string>
+    <string name="brief_action_drive_dust">غبار يحجب الرؤية على الطريق</string>
+    <string name="brief_action_drive_slippery">الطرق زلقة في طريقك</string>
+    <string name="brief_action_drive_glare">شمس منخفضة في طريق القيادة</string>
+    <string name="brief_drive_flooded">أمطار غزيرة %1$s، نحو %2$s: الشوارع والأنفاق قد تغرق، فتجنب الأنفاق واخرج مبكرًا.</string>
+    <string name="brief_drive_fog">شبورة %1$s، نحو %2$s: شغّل الإضاءة المنخفضة، واترك مسافة كافية، واخرج مبكرًا قليلًا.</string>
+    <string name="brief_drive_dust">غبار يحجب الرؤية %1$s، نحو %2$s: شغّل الأنوار، وأغلق النوافذ، وخفّف السرعة.</string>
+    <string name="brief_drive_slippery">طرق مبتلة %1$s، نحو %2$s: اضغط الفرامل مبكرًا واترك مسافة أكبر.</string>
+    <string name="brief_drive_first_rain">أول مطر بعد أيام جافة %1$s، نحو %2$s: الطرق تصبح زيتية وزلقة، فاضغط الفرامل مبكرًا.</string>
+    <string name="brief_drive_crosswind">رياح قوية %1$s، نحو %2$s: أمسك المقود جيدًا على الكباري والطرق المفتوحة.</string>
+    <string name="brief_drive_glare">شمس منخفضة %1$s، نحو %2$s: جهّز النظارة الشمسية وأنزل حاجب الشمس.</string>
+
     <string name="brief_day_temps">العظمى %1$s · الصغرى %2$s</string>
     <string name="brief_sunset">الغروب %1$s</string>
     <string name="brief_window_out">الخروج من المنزل</string>

@@ -115,6 +115,19 @@
     <string name="brief_hazard_high_uv">Very high UV %1$s, around %2$s.</string>
     <string name="brief_hazard_cold">Very cold %1$s, around %2$s.</string>
 
+    <string name="brief_action_drive_flooded">streets may flood on your drive</string>
+    <string name="brief_action_drive_fog">fog on your drive</string>
+    <string name="brief_action_drive_dust">dust cuts visibility on your drive</string>
+    <string name="brief_action_drive_slippery">slippery roads on your drive</string>
+    <string name="brief_action_drive_glare">low sun on your drive</string>
+    <string name="brief_drive_flooded">Heavy rain %1$s, around %2$s: streets and underpasses can flood, so avoid tunnels and leave early.</string>
+    <string name="brief_drive_fog">Fog %1$s, around %2$s: use low beams, keep your distance and leave a little early.</string>
+    <string name="brief_drive_dust">Dust cuts visibility %1$s, around %2$s: lights on, windows up, slow down.</string>
+    <string name="brief_drive_slippery">Wet roads %1$s, around %2$s: brake earlier and keep extra distance.</string>
+    <string name="brief_drive_first_rain">First rain after dry days %1$s, around %2$s: roads turn oily and slippery, so brake early.</string>
+    <string name="brief_drive_crosswind">Strong gusts %1$s, around %2$s: hold the wheel firmly on bridges and open roads.</string>
+    <string name="brief_drive_glare">Low sun %1$s, around %2$s: keep sunglasses handy and lower the visor.</string>
+
     <string name="brief_day_temps">High %1$s · low %2$s</string>
     <string name="brief_sunset">sunset %1$s</string>
     <string name="brief_window_out">Leaving home</string>

@@ -10,6 +10,7 @@ import com.mk.skycast.core.model.DailyForecast
 import com.mk.skycast.core.model.DayChangeKind
 import com.mk.skycast.core.model.DayPlanOverride
 import com.mk.skycast.core.model.DayType
+import com.mk.skycast.core.model.DrivingRisk
 import com.mk.skycast.core.model.ExposureKind
 import com.mk.skycast.core.model.ForecastCoverage
 import com.mk.skycast.core.model.Hazard
@@ -287,5 +288,71 @@ class BriefEngineTest {
         assertThat(ObserveDailyBriefUseCase.briefDate(at(9), zone)).isEqualTo(date)
         assertThat(ObserveDailyBriefUseCase.briefDate(at(12), zone)).isEqualTo(date.plusDays(1))
         assertThat(ObserveDailyBriefUseCase.briefDate(at(23, 30), zone)).isEqualTo(date.plusDays(1))
+    }
+
+    private val driver = commuter.copy(commute = commuter.commute.copy(mode = TravelMode.CAR))
+
+    @Test
+    fun `drivers get road cautions instead of generic fog and rain lines`() {
+        val weather = weather { time ->
+            when (time) {
+                at(8) -> hour(time, visibility = 400.0, condition = WeatherCondition.FOG)
+                at(17) -> hour(time, chance = 80, mm = 1.0, condition = WeatherCondition.RAIN)
+                else -> hour(time)
+            }
+        }
+
+        val brief = build(routine = driver, weather = weather)
+
+        assertThat(brief.driving.map { Triple(it.risk, it.window, it.at) }).containsExactly(
+            Triple(DrivingRisk.LOW_VISIBILITY, ExposureKind.COMMUTE_OUT, at(8)),
+            Triple(DrivingRisk.SLIPPERY_ROAD, ExposureKind.COMMUTE_BACK, at(17)),
+        ).inOrder()
+        // The previous day in the forecast was dry: the first rain makes roads oily.
+        assertThat(brief.driving.last().firstRain).isTrue()
+    }
+
+    @Test
+    fun `heavy rain on a drive warns about flooded streets`() {
+        val weather = weather { time ->
+            if (time == at(8)) hour(time, chance = 90, mm = 8.0, condition = WeatherCondition.RAIN) else hour(time)
+        }
+
+        val brief = build(routine = driver, weather = weather)
+
+        assertThat(brief.driving.first().risk).isEqualTo(DrivingRisk.FLOODED_STREETS)
+    }
+
+    @Test
+    fun `blowing dust with low visibility is a driving risk`() {
+        val air = listOf(HourlyAirQuality(at(8), usAqi = 180, pm10 = 400.0, dust = 300.0))
+        val weather = weather(air = air) { time ->
+            if (time == at(8)) hour(time, visibility = 2_000.0) else hour(time)
+        }
+
+        val brief = build(routine = driver, weather = weather)
+
+        assertThat(brief.driving.first().risk).isEqualTo(DrivingRisk.DUST_VISIBILITY)
+    }
+
+    @Test
+    fun `low sun near sunset under a clear sky means glare`() {
+        val routine = driver.copy(commute = driver.commute.copy(leaveWork = LocalTime.of(17, 30)))
+
+        val brief = build(routine = routine)
+
+        assertThat(brief.driving.map { it.risk to it.at }).containsExactly(DrivingRisk.SUN_GLARE to at(17, 30))
+    }
+
+    @Test
+    fun `passengers on public transport get no driving cautions`() {
+        val weather = weather { time ->
+            if (time == at(8)) hour(time, visibility = 400.0, condition = WeatherCondition.FOG) else hour(time)
+        }
+
+        val brief = build(weather = weather)
+
+        assertThat(brief.driving).isEmpty()
+        assertThat(brief.hazards.map { it.hazard }).contains(Hazard.FOG)
     }
 }

@@ -8,6 +8,7 @@ import com.mk.skycast.core.domain.repository.WeatherRepository
 import com.mk.skycast.core.model.BriefFingerprint
 import com.mk.skycast.core.model.CarryItem
 import com.mk.skycast.core.model.DailyBrief
+import com.mk.skycast.core.model.DrivingRisk
 import com.mk.skycast.core.model.Hazard
 import java.time.Instant
 import javax.inject.Inject
@@ -71,11 +72,18 @@ class PrepareBriefNotificationUseCase @Inject constructor(
             Hazard.EXTREME_HEAT,
             Hazard.STRONG_WIND,
         )
+        private val ACTION_DRIVING = setOf(
+            DrivingRisk.FLOODED_STREETS,
+            DrivingRisk.LOW_VISIBILITY,
+            DrivingRisk.DUST_VISIBILITY,
+            DrivingRisk.SLIPPERY_ROAD,
+        )
 
         fun fingerprint(brief: DailyBrief) = BriefFingerprint(
             date = brief.date,
             keys = brief.carry.map { it.item }.filter { it in ACTION_ITEMS }.map { "carry:${it.name}" }.toSet() +
-                brief.hazards.map { it.hazard }.filter { it in ACTION_HAZARDS }.map { "hazard:${it.name}" },
+                brief.hazards.map { it.hazard }.filter { it in ACTION_HAZARDS }.map { "hazard:${it.name}" } +
+                brief.driving.map { it.risk }.filter { it in ACTION_DRIVING }.map { "drive:${it.name}" },
         )
     }
 }

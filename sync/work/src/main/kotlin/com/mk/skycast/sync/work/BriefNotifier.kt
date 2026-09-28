@@ -54,7 +54,8 @@ class BriefNotifier @Inject constructor(
         val headline = text.headline(brief, now)
         val title = if (notice.isUpdate) context.getString(R.string.brief_update_title, headline) else headline
         val lines = listOfNotNull(text.wear(brief)) +
-            brief.hazards.take(MAX_LINES).map(text::hazard) +
+            brief.driving.take(MAX_LINES).map(text::driving) +
+            text.hazards(brief).take(MAX_LINES).map(text::hazard) +
             brief.carry.take(MAX_LINES).map(text::carry) +
             listOfNotNull(text.dayOutlook(brief).takeIf { !brief.hasOutings })
         val body = lines.joinToString("\n")

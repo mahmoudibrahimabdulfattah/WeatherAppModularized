@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Checkroom
+import androidx.compose.material.icons.rounded.DirectionsCar
 import androidx.compose.material.icons.rounded.EventAvailable
 import androidx.compose.material.icons.rounded.Masks
 import androidx.compose.material.icons.rounded.Tune
@@ -82,6 +83,8 @@ internal fun BriefCard(
             Text(it, style = MaterialTheme.typography.bodyMedium, color = SkyColors.MutedSky)
         }
         if (!brief.hasOutings) Text(text.dayOutlook(brief), style = MaterialTheme.typography.bodyLarge)
+        // Road cautions stay visible: they change when and how people leave.
+        brief.driving.forEach { DetailLine(Icons.Rounded.DirectionsCar, text.driving(it)) }
         if (brief.carry.isNotEmpty()) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(SkySpace.small),
@@ -109,7 +112,7 @@ internal fun BriefCard(
 private fun BriefDetails(brief: DailyBrief, text: BriefText, modifier: Modifier = Modifier) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(SkySpace.medium)) {
         HorizontalDivider(color = SkyColors.Divider)
-        brief.hazards.forEach { DetailLine(Icons.Rounded.WarningAmber, text.hazard(it)) }
+        text.hazards(brief).forEach { DetailLine(Icons.Rounded.WarningAmber, text.hazard(it)) }
         brief.carry.forEach { DetailLine(it.item.icon(), text.carry(it)) }
         brief.windows.forEach { outlook ->
             Column {

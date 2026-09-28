@@ -9,6 +9,8 @@ import com.mk.skycast.core.model.DayChange
 import com.mk.skycast.core.model.DayChangeKind
 import com.mk.skycast.core.model.DayOutlook
 import com.mk.skycast.core.model.DayPlanOverride
+import com.mk.skycast.core.model.DrivingAlert
+import com.mk.skycast.core.model.DrivingRisk
 import com.mk.skycast.core.model.ExposureWindow
 import com.mk.skycast.core.model.ForecastCoverage
 import com.mk.skycast.core.model.Hazard
@@ -64,6 +66,11 @@ object BriefEngine {
                 .groupBy { it.hazard }
                 .map { (_, alerts) -> alerts.minBy { it.at } }
                 .sortedWith(compareBy({ it.hazard.ordinal }, { it.at })),
+            driving = windows
+                .flatMap { drivingFor(it, samples.getValue(it), weather) }
+                .groupBy { it.risk }
+                .map { (_, alerts) -> alerts.minBy { it.at } }
+                .sortedWith(compareBy({ it.risk.ordinal }, { it.at })),
             change = changeFrom(weather.daily.firstOrNull { it.date == date.minusDays(1) }, daily),
             day = DayOutlook(
                 daily.condition,
@@ -160,6 +167,61 @@ object BriefEngine {
         return alerts
     }
 
+    /** Road cautions for trips behind the wheel (car or motorbike). */
+    private fun drivingFor(window: ExposureWindow, samples: Samples, weather: Weather): List<DrivingAlert> {
+        if (!window.isDriving()) return emptyList()
+        val gustLimit = if (window.mode == TravelMode.MOTORBIKE) GUST_EXPOSED_KMH else CROSSWIND_CAR_KMH
+        val dustyAt = samples.air
+            .filter { (it.dust ?: 0.0) >= DUST_UG || (it.pm10 ?: 0.0) >= PM10_DUST_UG }
+            .map { it.time }
+            .toSet()
+        val alerts = mutableListOf<DrivingAlert>()
+        fun add(risk: DrivingRisk, at: Instant, firstRain: Boolean = false) {
+            alerts += DrivingAlert(risk, at, window.kind, firstRain)
+        }
+        samples.hours.forEach { hour ->
+            val visibility = hour.visibilityMeters ?: Double.MAX_VALUE
+            when {
+                hour.condition.isThunder() || hour.precipitationMm >= HEAVY_RAIN_MM ->
+                    add(DrivingRisk.FLOODED_STREETS, hour.time)
+
+                hour.isRainy() -> add(DrivingRisk.SLIPPERY_ROAD, hour.time, firstRain = dryDayBefore(hour, weather))
+            }
+            when {
+                hour.condition == WeatherCondition.FOG -> add(DrivingRisk.LOW_VISIBILITY, hour.time)
+                hour.time in dustyAt && visibility < DUST_VISIBILITY_M -> add(DrivingRisk.DUST_VISIBILITY, hour.time)
+                visibility < FOG_VISIBILITY_M -> add(DrivingRisk.LOW_VISIBILITY, hour.time)
+            }
+            if ((hour.windGustsKmh ?: hour.windSpeedKmh) >= gustLimit) add(DrivingRisk.CROSSWIND, hour.time)
+        }
+        glareAt(window, samples, weather)?.let { add(DrivingRisk.SUN_GLARE, it) }
+        return alerts
+    }
+
+    /** First moment of the window that falls in the hour after sunrise or before sunset, if the sky is clear. */
+    private fun glareAt(window: ExposureWindow, samples: Samples, weather: Weather): Instant? {
+        val clearSky = setOf(WeatherCondition.CLEAR, WeatherCondition.MAINLY_CLEAR, WeatherCondition.PARTLY_CLOUDY)
+        val date = window.start.atZone(weather.zoneId).toLocalDate()
+        val day = weather.daily.firstOrNull { it.date == date } ?: return null
+        val lowSun = listOfNotNull(
+            day.sunrise?.let { it to it.plus(GLARE_MINUTES, ChronoUnit.MINUTES) },
+            day.sunset?.let { it.minus(GLARE_MINUTES, ChronoUnit.MINUTES) to it },
+        )
+        return lowSun.firstNotNullOfOrNull { (from, to) ->
+            if (window.end <= from || window.start >= to) return@firstNotNullOfOrNull null
+            val start = maxOf(window.start, from)
+            val sky = samples.hours.lastOrNull { it.time <= start } ?: return@firstNotNullOfOrNull null
+            start.takeIf { sky.condition in clearSky }
+        }
+    }
+
+    /** True when the forecast holds the previous day and it had (practically) no rain. */
+    private fun dryDayBefore(hour: HourlyForecast, weather: Weather): Boolean {
+        val date = hour.time.atZone(weather.zoneId).toLocalDate()
+        val before = weather.daily.firstOrNull { it.date == date.minusDays(1) } ?: return false
+        return before.precipitationSumMm < DRY_DAY_MM
+    }
+
     private fun carryFor(
         outlooks: List<WindowOutlook>,
         clothing: Map<ExposureWindow, ClothingLevel>,
@@ -215,6 +277,8 @@ object BriefEngine {
     /** Car trips are sheltered except for the walk to and from the car. */
     private fun ExposureWindow.isExposed() = mode != TravelMode.CAR || (outing != null && outdoors)
 
+    private fun ExposureWindow.isDriving() = mode == TravelMode.CAR || mode == TravelMode.MOTORBIKE
+
     private val HourlyForecast.feelsLikeC get() = apparentTemperatureC ?: temperatureC
 
     private fun HourlyForecast.isRainy() = (precipitationProbability ?: 0) >= RAIN_CHANCE ||
@@ -250,6 +314,10 @@ object BriefEngine {
     private const val FOG_VISIBILITY_M = 1_000.0
     private const val GUST_KMH = 55.0
     private const val GUST_EXPOSED_KMH = 40.0
+    private const val CROSSWIND_CAR_KMH = 50.0
+    private const val DUST_VISIBILITY_M = 5_000.0
+    private const val DRY_DAY_MM = 0.2
+    private const val GLARE_MINUTES = 60L
     private const val EXTREME_HEAT_C = 40.0
     private const val WATER_C = 32.0
     private const val COLD_C = 5.0
