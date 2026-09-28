@@ -8,6 +8,8 @@ import com.mk.skycast.core.model.ClothingLevel
 import com.mk.skycast.core.model.DailyBrief
 import com.mk.skycast.core.model.DayChangeKind
 import com.mk.skycast.core.model.DayType
+import com.mk.skycast.core.model.DrivingAlert
+import com.mk.skycast.core.model.DrivingRisk
 import com.mk.skycast.core.model.ExposureKind
 import com.mk.skycast.core.model.ExposureWindow
 import com.mk.skycast.core.model.Hazard
@@ -57,10 +59,15 @@ class BriefText(private val resources: Resources, private val formatter: Weather
 
     /** True when nothing outranks clothing, so the headline already says what to wear. */
     private fun headlineIsClothing(brief: DailyBrief) = brief.hazards.none { it.hazard in HEADLINE_HAZARDS } &&
+        brief.driving.none { it.risk in HEADLINE_DRIVING } &&
         brief.carry.none { it.item in HEADLINE_ITEMS } &&
         brief.change == null
 
     private fun action(brief: DailyBrief): String {
+        brief.hazards.firstOrNull { it.hazard == Hazard.THUNDERSTORM }
+            ?.let { return resources.getString(it.hazard.actionRes()) }
+        brief.driving.firstOrNull { it.risk in HEADLINE_DRIVING }
+            ?.let { return resources.getString(it.risk.actionRes()) }
         brief.hazards.firstOrNull { it.hazard in HEADLINE_HAZARDS }
             ?.let { return resources.getString(it.hazard.actionRes()) }
         brief.carry.firstOrNull { it.item in HEADLINE_ITEMS }?.let { return resources.getString(it.item.actionRes()) }
@@ -102,6 +109,21 @@ class BriefText(private val resources: Resources, private val formatter: Weather
 
     fun carry(suggestion: CarrySuggestion): String =
         resources.getString(suggestion.item.lineRes(), where(suggestion.because), time(suggestion.at))
+
+    /** Hazards not already told as a driving caution for the same trip. */
+    fun hazards(brief: DailyBrief): List<HazardAlert> = brief.hazards.filterNot { alert ->
+        val risks = DRIVING_COVERS[alert.hazard] ?: return@filterNot false
+        brief.driving.any { it.risk in risks && it.window == alert.window }
+    }
+
+    fun driving(alert: DrivingAlert): String {
+        val res = if (alert.risk == DrivingRisk.SLIPPERY_ROAD && alert.firstRain) {
+            R.string.brief_drive_first_rain
+        } else {
+            alert.risk.lineRes()
+        }
+        return resources.getString(res, where(alert.window), time(alert.at))
+    }
 
     fun hazard(alert: HazardAlert): String =
         resources.getString(alert.hazard.lineRes(), alert.window?.let(::where).orEmpty(), time(alert.at)).trim()
@@ -166,6 +188,18 @@ class BriefText(private val resources: Resources, private val formatter: Weather
             Hazard.DUST,
             Hazard.EXTREME_HEAT,
             Hazard.STRONG_WIND,
+        )
+        val HEADLINE_DRIVING = setOf(
+            DrivingRisk.FLOODED_STREETS,
+            DrivingRisk.LOW_VISIBILITY,
+            DrivingRisk.DUST_VISIBILITY,
+            DrivingRisk.SLIPPERY_ROAD,
+        )
+        val DRIVING_COVERS = mapOf(
+            Hazard.HEAVY_RAIN to setOf(DrivingRisk.FLOODED_STREETS),
+            Hazard.RAIN to setOf(DrivingRisk.SLIPPERY_ROAD, DrivingRisk.FLOODED_STREETS),
+            Hazard.FOG to setOf(DrivingRisk.LOW_VISIBILITY, DrivingRisk.DUST_VISIBILITY),
+            Hazard.STRONG_WIND to setOf(DrivingRisk.CROSSWIND),
         )
         val HEADLINE_ITEMS = setOf(CarryItem.UMBRELLA, CarryItem.RAINCOAT, CarryItem.EXTRA_LAYER, CarryItem.MASK)
     }
@@ -239,6 +273,26 @@ private fun Hazard.lineRes(): Int = when (this) {
     Hazard.EXTREME_HEAT -> R.string.brief_hazard_extreme_heat
     Hazard.HIGH_UV -> R.string.brief_hazard_high_uv
     Hazard.COLD -> R.string.brief_hazard_cold
+}
+
+@StringRes
+private fun DrivingRisk.actionRes(): Int = when (this) {
+    DrivingRisk.FLOODED_STREETS -> R.string.brief_action_drive_flooded
+    DrivingRisk.LOW_VISIBILITY -> R.string.brief_action_drive_fog
+    DrivingRisk.DUST_VISIBILITY -> R.string.brief_action_drive_dust
+    DrivingRisk.SLIPPERY_ROAD -> R.string.brief_action_drive_slippery
+    DrivingRisk.CROSSWIND -> R.string.brief_action_strong_wind
+    DrivingRisk.SUN_GLARE -> R.string.brief_action_drive_glare
+}
+
+@StringRes
+private fun DrivingRisk.lineRes(): Int = when (this) {
+    DrivingRisk.FLOODED_STREETS -> R.string.brief_drive_flooded
+    DrivingRisk.LOW_VISIBILITY -> R.string.brief_drive_fog
+    DrivingRisk.DUST_VISIBILITY -> R.string.brief_drive_dust
+    DrivingRisk.SLIPPERY_ROAD -> R.string.brief_drive_slippery
+    DrivingRisk.CROSSWIND -> R.string.brief_drive_crosswind
+    DrivingRisk.SUN_GLARE -> R.string.brief_drive_glare
 }
 
 @StringRes

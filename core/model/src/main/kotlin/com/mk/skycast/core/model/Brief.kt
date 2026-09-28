@@ -19,6 +19,8 @@ data class DailyBrief(
     val layerForSwing: Boolean,
     val carry: List<CarrySuggestion>,
     val hazards: List<HazardAlert>,
+    /** Road-specific cautions for trips made by car or motorbike. */
+    val driving: List<DrivingAlert> = emptyList(),
     val change: DayChange?,
     val day: DayOutlook,
     val coverage: ForecastCoverage,
@@ -91,6 +93,35 @@ enum class Hazard {
 }
 
 data class HazardAlert(val hazard: Hazard, val at: Instant, val window: ExposureKind?)
+
+/** Road conditions worth a driver's attention; declared most to least serious. */
+enum class DrivingRisk {
+    /** Heavy rain: streets, tunnels and underpasses can flood. */
+    FLOODED_STREETS,
+
+    /** Fog or mist (visibility under 1 km). */
+    LOW_VISIBILITY,
+
+    /** Blowing dust that cuts visibility. */
+    DUST_VISIBILITY,
+
+    /** Wet roads; worst with the first rain after dry days, when oil comes up. */
+    SLIPPERY_ROAD,
+
+    /** Gusts strong enough to push a car or motorbike sideways. */
+    CROSSWIND,
+
+    /** Driving within an hour of sunrise or sunset under clear skies. */
+    SUN_GLARE,
+}
+
+data class DrivingAlert(
+    val risk: DrivingRisk,
+    val at: Instant,
+    val window: ExposureKind,
+    /** For [DrivingRisk.SLIPPERY_ROAD]: the previous day was dry, so roads are extra slick. */
+    val firstRain: Boolean = false,
+)
 
 enum class DayChangeKind { WARMER, COLDER, WINDIER, RAINIER }
 
