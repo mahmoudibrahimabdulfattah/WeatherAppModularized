@@ -22,7 +22,7 @@ class RephraseAnswerUseCase @Inject constructor(
     private val region: AiRegionPolicy,
     private val clock: Clock,
 ) {
-    private val cache = mutableMapOf<RephraseRequest, String>()
+    private val cache = mutableMapOf<Any, String>()
     private val mutex = Mutex()
 
     /** What the sheet should show before (or instead of) asking the model. */
@@ -36,17 +36,28 @@ class RephraseAnswerUseCase @Inject constructor(
         }
     }
 
-    suspend operator fun invoke(request: RephraseRequest): AiWording {
+    suspend operator fun invoke(request: RephraseRequest): AiWording =
+        generate(request, { generator.rephrase(request) }, { AiPolicy.validate(it, request) })
+
+    /** Answers a typed question from forecast facts only; same gates, cap and cache. */
+    suspend fun answer(request: FreeQuestionRequest): AiWording =
+        generate(request, { generator.answer(request) }, { AiPolicy.validate(it, request) })
+
+    private suspend fun generate(
+        key: Any,
+        call: suspend () -> Outcome<String, AiError>,
+        validate: (String) -> String?,
+    ): AiWording {
         gate()?.let { return it }
         return mutex.withLock {
-            cache[request]?.let { return@withLock AiWording.Ready(it) }
+            cache[key]?.let { return@withLock AiWording.Ready(it) }
             val today = LocalDate.now(clock.withZone(ZoneId.systemDefault()))
             if (settings.generationsOn(today) >= AiPolicy.DAILY_CAP) return@withLock AiWording.DailyLimitReached
-            when (val result = generator.rephrase(request)) {
+            when (val result = call()) {
                 is Outcome.Success -> {
                     settings.recordGeneration(today)
-                    val text = AiPolicy.validate(result.data, request) ?: return@withLock AiWording.Unavailable
-                    cache[request] = text
+                    val text = validate(result.data) ?: return@withLock AiWording.Unavailable
+                    cache[key] = text
                     AiWording.Ready(text)
                 }
 

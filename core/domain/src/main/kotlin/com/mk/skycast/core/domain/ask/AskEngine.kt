@@ -33,8 +33,13 @@ internal object AskEngine {
         return AskAnswer.Wear(brief)
     }
 
-    fun exercise(kind: ExerciseKind, weather: Weather, now: Instant): AskAnswer.ExerciseWindow {
-        val candidates = weather.searchHours(now, days = 3)
+    fun exercise(
+        kind: ExerciseKind,
+        weather: Weather,
+        now: Instant,
+        onDate: LocalDate? = null,
+    ): AskAnswer.ExerciseWindow {
+        val candidates = weather.searchHours(now, days = 3, onDate)
             .filter { it.localTime(weather.zoneId) in EXERCISE_START..EXERCISE_END }
         val airByHour = weather.airByHour()
         val scored = candidates.mapNotNull { hour ->
@@ -68,8 +73,8 @@ internal object AskEngine {
         )
     }
 
-    fun avoidHeat(weather: Weather, now: Instant): AskAnswer.AvoidHeat? {
-        val hours = weather.searchHours(now, days = 2)
+    fun avoidHeat(weather: Weather, now: Instant, onDate: LocalDate? = null): AskAnswer.AvoidHeat? {
+        val hours = weather.searchHours(now, days = if (onDate == null) 2 else 3, onDate)
             .filter { it.localTime(weather.zoneId) in EXERCISE_START..EXERCISE_END }
         val peak = hours.maxByOrNull { it.feelsLikeC } ?: return null
         val hotHours = hours.filter { it.feelsLikeC >= HEAT_C }
@@ -92,9 +97,9 @@ internal object AskEngine {
         )
     }
 
-    fun laundry(weather: Weather, now: Instant): AskAnswer.Laundry {
+    fun laundry(weather: Weather, now: Instant, onDate: LocalDate? = null): AskAnswer.Laundry {
         val airByHour = weather.airByHour()
-        val scored = weather.searchHours(now, days = 3)
+        val scored = weather.searchHours(now, days = 3, onDate)
             .filter { it.localTime(weather.zoneId) in LAUNDRY_START..LAUNDRY_END }
             .mapNotNull { hour ->
                 val score = laundryScore(hour, airByHour[hour.time]) ?: return@mapNotNull null
@@ -117,9 +122,9 @@ internal object AskEngine {
         )
     }
 
-    fun rain(weather: Weather, now: Instant): AskAnswer.Rain {
+    fun rain(weather: Weather, now: Instant, onDate: LocalDate? = null): AskAnswer.Rain {
         val today = now.atZone(weather.zoneId).toLocalDate()
-        val days = (0L..2L).map { offset ->
+        val days = (0L..2L).filter { onDate == null || today.plusDays(it) == onDate }.map { offset ->
             val date = today.plusDays(offset)
             val hours = weather.hourly.filter { it.time.atZone(weather.zoneId).toLocalDate() == date }
             val daily = weather.daily.firstOrNull { it.date == date }
@@ -224,11 +229,13 @@ internal object AskEngine {
         }
     }
 
-    private fun Weather.searchHours(now: Instant, days: Long): List<HourlyForecast> {
+    /** Upcoming hours over [days] days, or only those on [onDate] when the question named a day. */
+    private fun Weather.searchHours(now: Instant, days: Long, onDate: LocalDate? = null): List<HourlyForecast> {
         val start = now.truncatedTo(ChronoUnit.HOURS)
         val endDate = now.atZone(zoneId).toLocalDate().plusDays(days)
         return hourly.filter { hour ->
-            !hour.time.isBefore(start) && hour.time.atZone(zoneId).toLocalDate().isBefore(endDate)
+            val date = hour.time.atZone(zoneId).toLocalDate()
+            !hour.time.isBefore(start) && date.isBefore(endDate) && (onDate == null || date == onDate)
         }
     }
 

@@ -20,11 +20,17 @@ class AnswerAskQuestionUseCase @Inject constructor(
     private val preferences: UserPreferencesRepository,
     private val comfort: ComfortRepository,
 ) {
-    suspend operator fun invoke(question: AskQuestion, exercise: ExerciseKind? = null, now: Instant): AskAnswer? {
+    suspend operator fun invoke(
+        question: AskQuestion,
+        exercise: ExerciseKind? = null,
+        now: Instant,
+        day: DayHint? = null,
+    ): AskAnswer? {
         val routine = routines.routine.first()
         val savedLocations = locations.observeSavedLocations().first()
         val location = askLocation(routine, savedLocations) ?: return null
         val forecast = weather.observeWeather(location.id).first() ?: return null
+        val onDate = day?.resolve(now.atZone(forecast.zoneId).toLocalDate())
         return when (question) {
             AskQuestion.WHAT_TO_WEAR -> {
                 val overrideDate = ObserveDailyBriefUseCase.briefDate(now, forecast.zoneId)
@@ -37,13 +43,13 @@ class AnswerAskQuestionUseCase @Inject constructor(
                 )
             }
 
-            AskQuestion.BEST_EXERCISE_TIME -> AskEngine.exercise(exercise ?: ExerciseKind.WALK, forecast, now)
+            AskQuestion.BEST_EXERCISE_TIME -> AskEngine.exercise(exercise ?: ExerciseKind.WALK, forecast, now, onDate)
 
-            AskQuestion.AVOID_HEAT -> AskEngine.avoidHeat(forecast, now)
+            AskQuestion.AVOID_HEAT -> AskEngine.avoidHeat(forecast, now, onDate)
 
-            AskQuestion.LAUNDRY -> AskEngine.laundry(forecast, now)
+            AskQuestion.LAUNDRY -> AskEngine.laundry(forecast, now, onDate)
 
-            AskQuestion.RAIN_NEXT_DAYS -> AskEngine.rain(forecast, now)
+            AskQuestion.RAIN_NEXT_DAYS -> AskEngine.rain(forecast, now, onDate)
 
             AskQuestion.AIR_QUALITY -> AskEngine.air(forecast, now)
         }

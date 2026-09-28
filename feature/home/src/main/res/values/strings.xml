@@ -95,4 +95,9 @@
     <string name="home_comfort_right">Just right</string>
     <string name="home_comfort_hot">I felt hot</string>
     <string name="home_comfort_thanks">Got it — your clothing advice is now tuned to you.</string>
+    <string name="home_ask_placeholder">Or ask anything about the weather…</string>
+    <string name="home_ask_privacy">Don\'t include personal details.</string>
+    <string name="home_ask_send">Ask</string>
+    <string name="home_ask_you_asked">You asked: %1$s</string>
+    <string name="home_ask_no_match">I can answer this kind of question better with one of the questions above.</string>
 </resources>

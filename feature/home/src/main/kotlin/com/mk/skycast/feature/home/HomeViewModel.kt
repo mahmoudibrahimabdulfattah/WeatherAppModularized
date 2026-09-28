@@ -5,11 +5,15 @@ import com.mk.skycast.core.common.Outcome
 import com.mk.skycast.core.common.TimeTicker
 import com.mk.skycast.core.domain.ai.AiConsent
 import com.mk.skycast.core.domain.ai.AiWording
+import com.mk.skycast.core.domain.ai.ForecastContext
+import com.mk.skycast.core.domain.ai.FreeQuestionRequest
 import com.mk.skycast.core.domain.ai.RephraseAnswerUseCase
 import com.mk.skycast.core.domain.ai.RephraseRequest
 import com.mk.skycast.core.domain.ai.SetAiConsentUseCase
 import com.mk.skycast.core.domain.ask.AnswerAskQuestionUseCase
+import com.mk.skycast.core.domain.ask.AskIntentMatcher
 import com.mk.skycast.core.domain.ask.AskQuestion
+import com.mk.skycast.core.domain.ask.DayHint
 import com.mk.skycast.core.domain.brief.ExposurePlanner
 import com.mk.skycast.core.domain.brief.ObserveComfortPromptUseCase
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
@@ -79,6 +83,7 @@ class HomeViewModel @Inject constructor(
     private var hasAttemptedAutoLocate = false
     private var pendingOpenPlans = false
     private var lastWordingRequest: RephraseRequest? = null
+    private var lastFreeRequest: FreeQuestionRequest? = null
 
     init {
         combine(
@@ -163,7 +168,8 @@ class HomeViewModel @Inject constructor(
             is HomeIntent.AskExerciseSelected -> {
                 reduce { copy(askSheet = askSheet?.copy(exercise = intent.exercise)) }
                 if (currentState.askSheet?.question == AskQuestion.BEST_EXERCISE_TIME) {
-                    selectAskQuestion(AskQuestion.BEST_EXERCISE_TIME)
+                    val sheet = currentState.askSheet
+                    selectAskQuestion(AskQuestion.BEST_EXERCISE_TIME, sheet?.typedQuestion, sheet?.dayHint)
                 }
             }
 
@@ -171,9 +177,15 @@ class HomeViewModel @Inject constructor(
 
             is HomeIntent.AskWordingRequested -> requestWording(intent.request)
 
+            is HomeIntent.AskTyped -> onAskTyped(intent.text.trim(), intent.languageTag)
+
             is HomeIntent.AskAiConsentGiven -> viewModelScope.launch {
                 setAiConsent(if (intent.granted) AiConsent.GRANTED else AiConsent.DECLINED)
-                lastWordingRequest?.let(::requestWording)
+                if (currentState.askSheet?.freeAnswer != null) {
+                    lastFreeRequest?.let(::requestFreeAnswer)
+                } else {
+                    lastWordingRequest?.let(::requestWording)
+                }
             }
 
             HomeIntent.OpenPlansRequested ->
@@ -215,6 +227,42 @@ class HomeViewModel @Inject constructor(
         reduce { copy(askSheet = AskSheetState(location = page.location, zoneId = weather.zoneId)) }
     }
 
+    /**
+     * Typed questions go to a guided, rule-based answer when they match one; anything
+     * else is answered by AI from the forecast facts (if AI is allowed).
+     */
+    private fun onAskTyped(text: String, languageTag: String) {
+        if (text.isEmpty()) return
+        val intent = AskIntentMatcher.match(text)
+        if (intent != null) {
+            intent.exercise?.let { exercise -> reduce { copy(askSheet = askSheet?.copy(exercise = exercise)) } }
+            selectAskQuestion(intent.question, typed = text, day = intent.day)
+            return
+        }
+        val sheet = currentState.askSheet ?: return
+        val weather = currentState.pages.firstOrNull { it.location.id == sheet.location.id }?.weather ?: return
+        reduce {
+            copy(
+                askSheet = sheet.copy(
+                    question = null,
+                    answer = null,
+                    aiWording = null,
+                    typedQuestion = text,
+                    freeAnswer = AiWording.Loading,
+                ),
+            )
+        }
+        requestFreeAnswer(FreeQuestionRequest(text, languageTag, ForecastContext.build(weather, clock.instant())))
+    }
+
+    private fun requestFreeAnswer(request: FreeQuestionRequest) {
+        lastFreeRequest = request
+        viewModelScope.launch {
+            val answer = rephraseAnswer.answer(request)
+            if (lastFreeRequest == request) reduce { copy(askSheet = askSheet?.copy(freeAnswer = answer)) }
+        }
+    }
+
     /** Deterministic answer stays on screen; AI wording, if allowed, arrives underneath. */
     private fun requestWording(request: RephraseRequest) {
         lastWordingRequest = request
@@ -227,11 +275,24 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun selectAskQuestion(question: AskQuestion) {
+    private fun selectAskQuestion(question: AskQuestion, typed: String? = null, day: DayHint? = null) {
         val sheet = currentState.askSheet ?: return
-        reduce { copy(askSheet = sheet.copy(question = question, answer = null, aiWording = null)) }
+        reduce {
+            copy(
+                askSheet = sheet.copy(
+                    question = question,
+                    answer = null,
+                    aiWording = null,
+                    typedQuestion = typed,
+                    dayHint = day,
+                    freeAnswer = null,
+                ),
+            )
+        }
         viewModelScope.launch {
-            val answer = answerAskQuestion(question, currentState.askSheet?.exercise, clock.instant()) ?: return@launch
+            val sheetNow = currentState.askSheet
+            val answer = answerAskQuestion(question, sheetNow?.exercise, clock.instant(), sheetNow?.dayHint)
+                ?: return@launch
             reduce { copy(askSheet = askSheet?.copy(answer = answer)) }
         }
     }

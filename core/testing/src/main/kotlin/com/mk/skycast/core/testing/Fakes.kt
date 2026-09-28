@@ -9,6 +9,7 @@ import com.mk.skycast.core.domain.ai.AdviceGenerator
 import com.mk.skycast.core.domain.ai.AiConsent
 import com.mk.skycast.core.domain.ai.AiError
 import com.mk.skycast.core.domain.ai.AiSettingsRepository
+import com.mk.skycast.core.domain.ai.FreeQuestionRequest
 import com.mk.skycast.core.domain.ai.RephraseRequest
 import com.mk.skycast.core.domain.repository.AppLanguageRepository
 import com.mk.skycast.core.domain.repository.BriefHistoryRepository
@@ -239,8 +240,13 @@ class FakeAiSettingsRepository(initial: AiConsent = AiConsent.UNKNOWN) : AiSetti
 
 class FakeAdviceGenerator(var result: Outcome<String, AiError> = Outcome.Success("Friendly wording.")) :
     AdviceGenerator {
-    val requests = mutableListOf<RephraseRequest>()
+    val requests = mutableListOf<Any>()
     override suspend fun rephrase(request: RephraseRequest): Outcome<String, AiError> {
+        requests += request
+        return result
+    }
+
+    override suspend fun answer(request: FreeQuestionRequest): Outcome<String, AiError> {
         requests += request
         return result
     }
