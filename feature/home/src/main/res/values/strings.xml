@@ -89,4 +89,10 @@
     <string name="home_ai_consent_adult">I\'m 18 or older</string>
     <string name="home_ai_consent_accept">Use AI wording</string>
     <string name="home_ai_consent_decline">Continue without AI</string>
+    <string name="home_comfort_title">How did today feel?</string>
+    <string name="home_comfort_body">Tell Skycast how today\'s weather felt when you were out. Your answers tune tomorrow\'s clothing advice to you.</string>
+    <string name="home_comfort_cold">I felt cold</string>
+    <string name="home_comfort_right">Just right</string>
+    <string name="home_comfort_hot">I felt hot</string>
+    <string name="home_comfort_thanks">Got it — your clothing advice is now tuned to you.</string>
 </resources>

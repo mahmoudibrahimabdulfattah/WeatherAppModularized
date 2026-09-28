@@ -2,6 +2,7 @@ package com.mk.skycast.core.domain.ask
 
 import com.google.common.truth.Truth.assertThat
 import com.mk.skycast.core.model.UserPreferences
+import com.mk.skycast.core.testing.FakeComfortRepository
 import com.mk.skycast.core.testing.FakeLocationRepository
 import com.mk.skycast.core.testing.FakeRoutineRepository
 import com.mk.skycast.core.testing.FakeUserPreferencesRepository
@@ -18,7 +19,7 @@ class AnswerAskQuestionUseCaseTest {
     )
     private val weather = FakeWeatherRepository()
     private val preferences = FakeUserPreferencesRepository(UserPreferences(selectedLocationId = 2))
-    private val useCase = AnswerAskQuestionUseCase(routines, locations, weather, preferences)
+    private val useCase = AnswerAskQuestionUseCase(routines, locations, weather, preferences, FakeComfortRepository())
 
     @Test
     fun `non-routine questions use selected location when routine is not configured`() = runTest {

@@ -19,10 +19,16 @@ import java.time.temporal.ChronoUnit
 
 internal object AskEngine {
 
-    fun wear(routine: Routine, override: DayPlanOverride?, weather: Weather, now: Instant): AskAnswer {
+    fun wear(
+        routine: Routine,
+        override: DayPlanOverride?,
+        weather: Weather,
+        now: Instant,
+        comfortOffsetC: Double = 0.0,
+    ): AskAnswer {
         if (!routine.isConfigured) return AskAnswer.RoutineNeeded(weather.fetchedAt, ForecastCoverage.PARTIAL)
         val date = ObserveDailyBriefUseCase.briefDate(now, weather.zoneId)
-        val brief = BriefEngine.build(date, weather.locationId, routine, override, weather)
+        val brief = BriefEngine.build(date, weather.locationId, routine, override, weather, comfortOffsetC)
             ?: return AskAnswer.RoutineNeeded(weather.fetchedAt, ForecastCoverage.PARTIAL)
         return AskAnswer.Wear(brief)
     }

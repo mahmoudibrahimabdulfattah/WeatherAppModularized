@@ -8,6 +8,7 @@ import com.mk.skycast.core.common.TimeTicker
 import com.mk.skycast.core.data.repository.AppCompatLanguageRepository
 import com.mk.skycast.core.data.repository.DataStoreAiSettingsRepository
 import com.mk.skycast.core.data.repository.DataStoreBriefHistoryRepository
+import com.mk.skycast.core.data.repository.DataStoreComfortRepository
 import com.mk.skycast.core.data.repository.DataStoreRoutineRepository
 import com.mk.skycast.core.data.repository.DataStoreUserPreferencesRepository
 import com.mk.skycast.core.data.repository.OfflineFirstWeatherRepository
@@ -17,6 +18,7 @@ import com.mk.skycast.core.data.util.ConnectivityNetworkMonitor
 import com.mk.skycast.core.domain.ai.AiSettingsRepository
 import com.mk.skycast.core.domain.repository.AppLanguageRepository
 import com.mk.skycast.core.domain.repository.BriefHistoryRepository
+import com.mk.skycast.core.domain.repository.ComfortRepository
 import com.mk.skycast.core.domain.repository.LocationRepository
 import com.mk.skycast.core.domain.repository.NetworkMonitor
 import com.mk.skycast.core.domain.repository.PlaceSearchRepository
@@ -59,6 +61,9 @@ internal abstract class DataModule {
 
     @Binds
     abstract fun bindAiSettingsRepository(impl: DataStoreAiSettingsRepository): AiSettingsRepository
+
+    @Binds
+    abstract fun bindComfortRepository(impl: DataStoreComfortRepository): ComfortRepository
 
     @Binds
     abstract fun bindAppLanguageRepository(impl: AppCompatLanguageRepository): AppLanguageRepository

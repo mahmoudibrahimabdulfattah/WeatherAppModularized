@@ -76,3 +76,8 @@ fun defaultWeek(): Map<DayOfWeek, DayType> = DayOfWeek.entries.associateWith { d
         else -> DayType.AWAY
     }
 }
+
+/** How the day's weather actually felt to the user, versus the advice. */
+enum class ComfortVote { COLD, RIGHT, HOT }
+
+data class ComfortFeedback(val date: LocalDate, val vote: ComfortVote)

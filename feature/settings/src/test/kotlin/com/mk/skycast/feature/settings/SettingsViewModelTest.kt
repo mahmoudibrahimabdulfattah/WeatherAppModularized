@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.mk.skycast.core.domain.ai.AiConsent
 import com.mk.skycast.core.domain.ai.ObserveAiAvailabilityUseCase
 import com.mk.skycast.core.domain.ai.SetAiConsentUseCase
+import com.mk.skycast.core.domain.brief.ResetComfortCalibrationUseCase
 import com.mk.skycast.core.domain.usecase.GetAppLanguageUseCase
 import com.mk.skycast.core.domain.usecase.ObserveUserPreferencesUseCase
 import com.mk.skycast.core.domain.usecase.PreferenceUpdate
@@ -14,6 +15,7 @@ import com.mk.skycast.core.model.TemperatureUnit
 import com.mk.skycast.core.model.ThemeMode
 import com.mk.skycast.core.testing.FakeAiSettingsRepository
 import com.mk.skycast.core.testing.FakeAppLanguageRepository
+import com.mk.skycast.core.testing.FakeComfortRepository
 import com.mk.skycast.core.testing.FakeUserPreferencesRepository
 import com.mk.skycast.core.testing.MainDispatcherRule
 import kotlinx.coroutines.test.runTest
@@ -35,6 +37,7 @@ class SettingsViewModelTest {
             UpdateUserPreferenceUseCase(preferences, language),
             ObserveAiAvailabilityUseCase(aiSettings) { true },
             SetAiConsentUseCase(aiSettings),
+            ResetComfortCalibrationUseCase(FakeComfortRepository()),
         )
     }
 

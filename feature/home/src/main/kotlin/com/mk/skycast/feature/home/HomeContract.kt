@@ -6,6 +6,7 @@ import com.mk.skycast.core.domain.ask.AskAnswer
 import com.mk.skycast.core.domain.ask.AskQuestion
 import com.mk.skycast.core.domain.ask.ExerciseKind
 import com.mk.skycast.core.domain.brief.ObserveDailyBriefUseCase
+import com.mk.skycast.core.model.ComfortVote
 import com.mk.skycast.core.model.DailyBrief
 import com.mk.skycast.core.model.DailyForecast
 import com.mk.skycast.core.model.DayPlanOverride
@@ -41,6 +42,8 @@ data class HomeState(
     /** Deterministic brief for the routine's location; null until the routine is set up. */
     val brief: DailyBrief? = null,
     val isBriefExpanded: Boolean = false,
+    /** Day to ask "how did it feel?" about, once the user is back home. */
+    val comfortPromptDate: LocalDate? = null,
     /** Open "plans changed?" sheet, or null. */
     val planEditor: PlanEditor? = null,
     /** Open Ask Skycast sheet, or null. */
@@ -107,6 +110,7 @@ sealed interface HomeIntent : UiIntent {
 
     data object OpenRoutineClicked : HomeIntent
     data object BriefExpandToggled : HomeIntent
+    data class ComfortVoted(val vote: ComfortVote) : HomeIntent
     data object PlansChangedClicked : HomeIntent
     data class AskOpened(val locationId: Long) : HomeIntent
     data class AskQuestionSelected(val question: AskQuestion) : HomeIntent

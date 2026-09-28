@@ -91,6 +91,7 @@ fun SettingsScreen(state: SettingsState, onIntent: (SettingsIntent) -> Unit, mod
                 onOpenDataSource = { onIntent(SettingsIntent.OpenDataSourceClicked) },
                 onOpenRoutine = { onIntent(SettingsIntent.OpenRoutineClicked) },
                 onToggleAi = { onIntent(SettingsIntent.AiWordingToggled(it)) },
+                onResetComfort = { onIntent(SettingsIntent.ResetComfortClicked) },
                 modifier = Modifier.padding(padding),
             )
         }
@@ -104,6 +105,7 @@ private fun SettingsContent(
     onOpenDataSource: () -> Unit,
     onOpenRoutine: () -> Unit,
     onToggleAi: (Boolean) -> Unit,
+    onResetComfort: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val preferences = state.preferences
@@ -122,6 +124,9 @@ private fun SettingsContent(
 
             SettingsGroup(R.string.settings_routine) {
                 RoutineEntry(onOpenRoutine)
+                TextButton(onClick = onResetComfort, contentPadding = PaddingValues(vertical = SkySpace.small)) {
+                    Text(stringResource(R.string.settings_comfort_reset))
+                }
             }
 
             if (state.aiSupported) {

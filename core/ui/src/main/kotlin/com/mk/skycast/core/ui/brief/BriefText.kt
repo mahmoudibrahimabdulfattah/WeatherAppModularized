@@ -93,6 +93,13 @@ class BriefText(private val resources: Resources, private val formatter: Weather
         return line + " " + resources.getString(R.string.brief_wear_swing, temp(warmest))
     }
 
+    /** Explains that clothing advice was adjusted from the user's feedback, or null if it wasn't. */
+    fun comfortNote(brief: DailyBrief): String? = when {
+        brief.clothing == null || kotlin.math.abs(brief.comfortOffsetC) < 1.0 -> null
+        brief.comfortOffsetC < 0 -> resources.getString(R.string.brief_tuned_cold)
+        else -> resources.getString(R.string.brief_tuned_warm)
+    }
+
     fun carry(suggestion: CarrySuggestion): String =
         resources.getString(suggestion.item.lineRes(), where(suggestion.because), time(suggestion.at))
 

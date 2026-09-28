@@ -87,6 +87,8 @@
     <string name="brief_wear_heavy">معطفًا ثقيلًا وقبعة وقفازات</string>
     <string name="brief_wear_line">ارتدِ %1$s، فالجو يبدو %2$s عند خروجك الساعة %3$s.</string>
     <string name="brief_wear_reason">يبدو الجو %1$s عند خروجك الساعة %2$s.</string>
+    <string name="brief_tuned_cold">مضبوطة عليك: تشعر بالبرد أكثر، لذا النصيحة أدفأ قليلًا.</string>
+    <string name="brief_tuned_warm">مضبوطة عليك: تشعر بالحر أكثر، لذا النصيحة أخف قليلًا.</string>
     <string name="brief_wear_swing">ترتفع الحرارة إلى %1$s لاحقًا، فاختر ما يمكنك خلعه.</string>
 
     <string name="brief_when_out">في طريق ذهابك</string>
