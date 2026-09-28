@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.mk.skycast.core.common.DataError
 import com.mk.skycast.core.common.Outcome
+import com.mk.skycast.core.domain.repository.WidgetRefresher
 import com.mk.skycast.core.domain.usecase.RefreshAllWeatherUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -15,10 +16,14 @@ class WeatherSyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val refreshAllWeather: RefreshAllWeatherUseCase,
+    private val widgetRefresher: WidgetRefresher,
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result = when (val result = refreshAllWeather()) {
-        is Outcome.Success -> Result.success()
+        is Outcome.Success -> {
+            widgetRefresher.refresh()
+            Result.success()
+        }
 
         is Outcome.Failure -> when (result.error) {
             DataError.NoInternet, DataError.Timeout, is DataError.Server ->

@@ -5,8 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -15,6 +13,7 @@ import com.mk.skycast.core.domain.brief.BriefNotice
 import com.mk.skycast.core.domain.usecase.ObserveUserPreferencesUseCase
 import com.mk.skycast.core.ui.brief.BriefText
 import com.mk.skycast.core.ui.format.WeatherFormatter
+import com.mk.skycast.core.ui.text.withAppLocale
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Clock
 import java.time.ZoneId
@@ -34,7 +33,7 @@ class BriefNotifier @Inject constructor(
             PackageManager.PERMISSION_GRANTED
         if (!granted || !manager.areNotificationsEnabled()) return
 
-        val context = localizedContext()
+        val context = appContext.withAppLocale()
         manager.createNotificationChannel(
             NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_DEFAULT)
                 .setName(context.getString(R.string.brief_channel_name))
@@ -72,15 +71,6 @@ class BriefNotifier @Inject constructor(
             .addAction(0, context.getString(R.string.brief_action_plans), openApp(REQUEST_PLANS, openPlans = true))
             .build()
         manager.notify(NOTIFICATION_ID, notification)
-    }
-
-    /** Background work gets the device locale; honor the in-app language instead. */
-    private fun localizedContext(): Context {
-        val locales = AppCompatDelegate.getApplicationLocales()
-        if (locales.isEmpty) return appContext
-        val configuration = Configuration(appContext.resources.configuration)
-        configuration.setLocales(android.os.LocaleList.forLanguageTags(locales.toLanguageTags()))
-        return appContext.createConfigurationContext(configuration)
     }
 
     private fun openApp(requestCode: Int, openPlans: Boolean): PendingIntent? {

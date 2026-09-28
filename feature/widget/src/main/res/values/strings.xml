@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label">Skycast brief</string>
+    <string name="widget_description">Current weather and what to wear or carry today or tomorrow</string>
+    <string name="widget_setup">Set up your routine for a daily brief</string>
+    <string name="widget_no_location">Open Skycast to add your location</string>
+</resources>

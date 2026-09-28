@@ -17,7 +17,7 @@ fun airQualityLabel(level: AirQualityLevel?): String = stringResource(level.labe
 fun uvLabel(uvIndex: Double): String = stringResource(uvLabelRes(uvIndex))
 
 @StringRes
-private fun WeatherCondition.labelRes(): Int = when (this) {
+fun WeatherCondition.labelRes(): Int = when (this) {
     WeatherCondition.CLEAR -> R.string.core_ui_clear
     WeatherCondition.MAINLY_CLEAR -> R.string.core_ui_mainly_clear
     WeatherCondition.PARTLY_CLOUDY -> R.string.core_ui_partly_cloudy

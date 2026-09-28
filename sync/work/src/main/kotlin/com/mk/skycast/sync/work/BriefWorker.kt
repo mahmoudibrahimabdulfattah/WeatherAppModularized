@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.mk.skycast.core.domain.brief.BriefRun
 import com.mk.skycast.core.domain.brief.PrepareBriefNotificationUseCase
+import com.mk.skycast.core.domain.repository.WidgetRefresher
 import com.mk.skycast.core.domain.usecase.ObserveDayOverridesUseCase
 import com.mk.skycast.core.domain.usecase.ObserveRoutineUseCase
 import dagger.assisted.Assisted
@@ -23,6 +24,7 @@ class BriefWorker @AssistedInject constructor(
     private val observeDayOverrides: ObserveDayOverridesUseCase,
     private val notifier: BriefNotifier,
     private val scheduler: WorkManagerBriefScheduler,
+    private val widgetRefresher: WidgetRefresher,
     private val clock: Clock,
 ) : CoroutineWorker(context, params) {
 
@@ -32,6 +34,7 @@ class BriefWorker @AssistedInject constructor(
         try {
             prepareBriefNotification(run, clock.instant())?.let { notifier.show(it) }
         } finally {
+            widgetRefresher.refresh()
             scheduler.scheduleNext(observeRoutine().first(), observeDayOverrides().first(), clock.instant())
         }
         return Result.success()
